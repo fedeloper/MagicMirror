@@ -4,10 +4,14 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:tflite/tflite.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import '/auth/firebase_user_provider.dart';
+//import '/login/login_widget.dart';
+import 'package:magic_mirror/home_page/home_page_widget.dart';
+void main() => runApp(Example());
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
+class Example extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
@@ -39,22 +43,21 @@ class MyImagePickerState extends State {
 
   Future getImageFromCamera() async {
 
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-
+    var pickedFile = await ImagePicker().getImage(source: ImageSource.camera);
+    final File file = File(pickedFile.path);
     setState(() {
-      imageURI = image;
-      path = image.path;
+      imageURI = file;
+      path = file.path;
     });
   }
 
   Future getImageFromGallery() async {
 
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-
+    var pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+    final File file = File(pickedFile.path);
     setState(() {
-      imageURI = image;
-      path = image.path;
+      imageURI = file;
+      path = file.path;
     });
   }
 
