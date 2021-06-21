@@ -98,7 +98,7 @@ class _FlutterFlowVideoPlayerState extends State<FlutterFlowVideoPlayer> {
           height: height,
           width: width,
           child: _chewieController != null &&
-                  _chewieController.videoPlayerController.value.initialized
+                  _chewieController.videoPlayerController.value.isInitialized
               ? Chewie(controller: _chewieController)
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
