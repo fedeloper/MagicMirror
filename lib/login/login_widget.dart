@@ -73,11 +73,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                       padding: EdgeInsets.fromLTRB(0, 60, 0, 60),
                       child: SingleChildScrollView(
     child:
-
-
-
-
-
                       Column(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

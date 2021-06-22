@@ -21,12 +21,15 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'dart:developer';
+
+
 class TellingthestoryWidget extends StatefulWidget {
-  final String path_photo;
-  TellingthestoryWidget(String path, {Key key,this.path_photo}) : super(key: key);
+  final String path;
+  TellingthestoryWidget({Key key,this.path}) : super(key: key);
 
   @override
-  _TellingthestoryWidgetState createState() => _TellingthestoryWidgetState();
+  _TellingthestoryWidgetState createState() => _TellingthestoryWidgetState(this.path);
 }
 
 class _TellingthestoryWidgetState  extends State<TellingthestoryWidget> {
@@ -34,6 +37,7 @@ class _TellingthestoryWidgetState  extends State<TellingthestoryWidget> {
   CameraController controller;
   bool _isInited = false;
   String _url;
+  _TellingthestoryWidgetState(this.path);
 
   @override
   void initState() {
@@ -42,15 +46,16 @@ class _TellingthestoryWidgetState  extends State<TellingthestoryWidget> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
 
-
+      classifyImage();
 
       final cameras = await availableCameras();
       print(cameras);
       // setState(() {});
-      controller = CameraController(cameras[0], ResolutionPreset.medium);
+      controller = CameraController(cameras[1], ResolutionPreset.medium);
       controller.initialize().then((value) => {
         setState(() {
           _isInited = true;
+
         })
       });
     });
@@ -58,8 +63,6 @@ class _TellingthestoryWidgetState  extends State<TellingthestoryWidget> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       key: scaffoldKey,
       body: SafeArea(
@@ -76,23 +79,33 @@ class _TellingthestoryWidgetState  extends State<TellingthestoryWidget> {
               child: MadoWidget(),
             ),
             Container(
-              height: MediaQuery.of(context).size.height * 0.7,
+              height: MediaQuery.of(context).size.height*0.6 ,
               child: Stack(
                 children: [
                   Align(
-                    alignment: Alignment(0.82, 0.86),
+                    alignment: Alignment.bottomRight,
                     child: Container(
-                        width: 76,
+                        width: 100,
+                        height:150,
                         child: _isInited
-                            ? AspectRatio(
-                          aspectRatio: controller.value.aspectRatio,
-                          child: CameraPreview(controller),
+                            ?  ClipRect(
+                          child: Container(
+                            child: Transform.scale(
+                              scale: controller.value.aspectRatio / MediaQuery.of(context).size.aspectRatio,
+                              child: Center(
+                                child: AspectRatio(
+                                  aspectRatio: controller.value.aspectRatio,
+                                  child: CameraPreview(controller),
+                                ),
+                              ),
+                            ),
+                          ),
                         )
                             : Container()
                     ),
                   ),
                   Align(
-                    alignment: Alignment(-0.59, 0.77),
+                    alignment: Alignment.bottomLeft,
                     child: FFButtonWidget(
                       onPressed: () async {
                         await Navigator.push(
@@ -154,6 +167,18 @@ class _TellingthestoryWidgetState  extends State<TellingthestoryWidget> {
       ),
     );
 
+
+  }
+  String result;
+  String path;
+  Future classifyImage() async {
+
+    await Tflite.loadModel(model: "assets/models/model.tflite",labels: "assets/models/labels.txt");
+    var output = await Tflite.runModelOnImage(path: path);
+
+    final snackBar = SnackBar(content: Text(output.toString()));
+
+    ScaffoldMessenger.of(this.context).showSnackBar(snackBar);
 
   }
 }

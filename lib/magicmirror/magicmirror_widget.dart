@@ -33,7 +33,7 @@ class _MagicmirrorWidget extends State<MagicmirrorWidget> {
       final cameras = await availableCameras();
       print(cameras);
       // setState(() {});
-      controller = CameraController(cameras[0], ResolutionPreset.medium);
+      controller = CameraController(cameras[1], ResolutionPreset.medium);
       controller.initialize().then((value) => {
         setState(() {
           _isInited = true;
@@ -76,15 +76,24 @@ class _MagicmirrorWidget extends State<MagicmirrorWidget> {
                   child: Container(
                     width: double.infinity,
                     child: _isInited
-                        ? AspectRatio(
-                      aspectRatio: controller.value.aspectRatio,
-                      child: CameraPreview(controller),
+                        ? ClipRect(
+                      child: Container(
+                        child: Transform.scale(
+                          scale: controller.value.aspectRatio / MediaQuery.of(context).size.aspectRatio,
+                          child: Center(
+                            child: AspectRatio(
+                              aspectRatio: controller.value.aspectRatio,
+                              child: CameraPreview(controller),
+                            ),
+                          ),
+                        ),
+                      ),
                     )
                         : Container()
                   ),
                 ),
                 Container(
-                  height: 152,
+                  height: 15,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -108,11 +117,11 @@ class _MagicmirrorWidget extends State<MagicmirrorWidget> {
                   onPressed: () async {
                     final path = join(
                         (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
-                    await controller.takePicture().then((res) => {
+                    await controller.takePicture(path).then((res) => {
                     Navigator.push(
                     context,
                     MaterialPageRoute(
-                    builder: (context) => TellingthestoryWidget(path),
+                    builder: (context) => TellingthestoryWidget(path: path),
                     ),
                     )
                     });
