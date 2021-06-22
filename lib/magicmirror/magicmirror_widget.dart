@@ -108,7 +108,7 @@ class _MagicmirrorWidget extends State<MagicmirrorWidget> {
                   onPressed: () async {
                     final path = join(
                         (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
-                    await controller.takePicture(path).then((res) => {
+                    await controller.takePicture().then((res) => {
                     Navigator.push(
                     context,
                     MaterialPageRoute(

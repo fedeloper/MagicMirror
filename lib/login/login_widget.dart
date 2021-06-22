@@ -32,6 +32,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       key: scaffoldKey,
       body: SafeArea(
         child: Stack(
@@ -61,7 +62,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                   ),
                 ),
                 Expanded(
-                  flex: 3,
+                  flex: 2,
                   child: Container(
                     width: double.infinity,
                     height: 100,

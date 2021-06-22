@@ -50,7 +50,7 @@ class _MadoWidgetState extends State<MadoWidget> {
           decoration: BoxDecoration(
             color: Color(0x70EEEEEE),
             image: DecorationImage(
-              fit: BoxFit.fitWidth,
+              fit: BoxFit.fill,
               image: Image.asset(
                 'assets/images/original.jpg',
               ).image,
@@ -234,11 +234,14 @@ class _MadoWidgetState extends State<MadoWidget> {
                         ),
                       ),
                       Align(
-                        alignment: Alignment(-0.69, -0.83),
-                        child: Text(
-                          madoUsersRecord.username,
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
+                        alignment: Alignment(0.95, -0.90),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child: Text(
+                            madoUsersRecord.username,
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Poppins',
+                            ),
                           ),
                         ),
                       )
