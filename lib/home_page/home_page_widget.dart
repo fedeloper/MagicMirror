@@ -1,3 +1,5 @@
+import 'package:magic_mirror/tellingthestory/tellingv2.dart';
+
 import '../components/mado_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
@@ -315,7 +317,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MagicmirrorWidget(),
+                      builder: (context) => TellingV2(),
                     ),
                   );
                 },
