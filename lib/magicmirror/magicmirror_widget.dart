@@ -13,11 +13,14 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+
 class MagicmirrorWidget extends StatefulWidget {
   @override
   _MagicmirrorWidget createState() => _MagicmirrorWidget();
 }
+
 final scaffoldKey = GlobalKey<ScaffoldState>();
+
 class _MagicmirrorWidget extends State<MagicmirrorWidget> {
   CameraDescription camera;
   CameraController controller;
@@ -118,7 +121,6 @@ class _MagicmirrorWidget extends State<MagicmirrorWidget> {
                     });
                   },
                 ),
-
               ],
             ),
           ),

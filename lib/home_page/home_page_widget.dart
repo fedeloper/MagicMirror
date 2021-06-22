@@ -1,3 +1,4 @@
+import 'package:magic_mirror/magicmirror/magicmirror2_widget.dart';
 import '../components/mado_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
@@ -315,7 +316,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MagicmirrorWidget(),
+                      builder: (context) => MagicMirrorWidget2(),//MagicmirrorWidget(),
                     ),
                   );
                 },
