@@ -316,7 +316,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MagicMirrorWidget2(),//MagicmirrorWidget(),
+                      builder: (context) => MagicmirrorWidget(), // MagicMirrorWidget2()
                     ),
                   );
                 },

@@ -35,7 +35,7 @@ class _MagicMirrorWidget2 extends State<MagicMirrorWidget2> {
   ));
   bool isBusy = false;
   CustomPaint customPaint;
-  Image croppedImage;
+  //Image croppedImage;
 
   @override
   void dispose() {
@@ -91,7 +91,7 @@ class _MagicMirrorWidget2 extends State<MagicMirrorWidget2> {
     isBusy = false;
     if (mounted) {
       setState(() {
-        croppedImage = cropImage(faces);
+        //croppedImage = cropImage(faces);
       });
     }
   }

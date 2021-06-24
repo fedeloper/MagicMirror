@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:magic_mirror/tellingthestory/tellingthestory_widget.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
@@ -96,14 +97,19 @@ class _CameraViewState extends State<CameraView> {
           ),
           SpeedDialChild(
             child: Icon(Icons.camera_front_rounded),
-            label: "save image",
+            label: "pass cropped image",
             onTap: () async {
               final path = join(
                   (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
-              var takePicture = _controller.takePicture();
-
-              //img_to_save = ImageSource.camera;
-
+                XFile _file = await _controller.takePicture();
+                _file.saveTo(path);
+                _stopLiveFeed();
+                Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TellingthestoryWidget(path)
+                      )
+                  );
             }
           )
         ],

@@ -5,6 +5,9 @@ import 'package:google_ml_kit/google_ml_kit.dart';
 
 import 'coordinates_translator.dart';
 
+
+
+
 class FaceDetectorPainter extends CustomPainter {
   FaceDetectorPainter(this.faces, this.absoluteImageSize, this.rotation);
 
