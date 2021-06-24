@@ -36,7 +36,6 @@ class _TellingthestoryWidgetState  extends State<TellingthestoryWidget> {
   CameraDescription camera;
   CameraController controller;
   bool _isInited = false;
-  String _url;
   _TellingthestoryWidgetState(this.path);
 
   @override

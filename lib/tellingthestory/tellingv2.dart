@@ -2,63 +2,31 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:magic_mirror/searchstory/audiofile.dart';
+import 'package:magic_mirror/searchstory/book.dart';
+import 'package:magic_mirror/searchstory/repository.dart';
 import 'common.dart';
+import 'dart:developer' as developer;
 import 'package:rxdart/rxdart.dart';
 import '../components/mado_widget.dart';
 void main() => runApp(MaterialApp(home:TellingV2()));
 
 class TellingV2 extends StatefulWidget {
+  final Book book;
+  TellingV2({Key key,this.book}) : super(key: key);
+
   @override
-  _TellingV2State createState() => _TellingV2State();
+  _TellingV2State createState() => _TellingV2State(this.book);
 }
 
 class _TellingV2State extends State<TellingV2> {
+  final Book book;
   AudioPlayer _player;
-  final _playlist = ConcatenatingAudioSource(children: [
-    ClippingAudioSource(
-      start: Duration(seconds: 60),
-      end: Duration(seconds: 90),
-      child: AudioSource.uri(Uri.parse(
-          "https://ia902901.us.archive.org/11/items/pollyanna_version_4_1808_librivox/pollyannav4_01_porter_64kb.mp3")),
-      tag: AudioMetadata(
-        album: "Pollyanna (version 4)",
-        title: "Chapter 1, Miss Polly",
-        artwork:
-        "https://archive.org/download/pollyanna_version_4_1808_librivox/pollyanna_v4_porter_1808.jpg",
-      ),
-    ),
-    AudioSource.uri(
-      Uri.parse(
-          "https://ia902901.us.archive.org/11/items/pollyanna_version_4_1808_librivox/pollyannav4_02_porter_64kb.mp3"),
-      tag: AudioMetadata(
-        album: "Pollyanna (version 4)",
-        title: "Chapter 2, Old Tom and Nancy",
-        artwork:
-        "https://archive.org/download/pollyanna_version_4_1808_librivox/pollyanna_v4_porter_1808.jpg",
-      ),
-    ),
-    AudioSource.uri(
-      Uri.parse("https://ia902901.us.archive.org/11/items/pollyanna_version_4_1808_librivox/pollyannav4_03_porter_64kb.mp3"),
-      tag: AudioMetadata(
-        album: "Pollyanna (version 4)",
-        title: "Chapter 3, The Coming of Pollyanna",
-        artwork:
-        "https://archive.org/download/pollyanna_version_4_1808_librivox/pollyanna_v4_porter_1808.jpg",
-      ),
-    ),
-    AudioSource.uri(
-      Uri.parse("https://ia902901.us.archive.org/11/items/pollyanna_version_4_1808_librivox/pollyannav4_04_porter_64kb.mp3"),
-      tag: AudioMetadata(
-        album: "Pollyanna (version 4)",
-        title: "Chapter 4, The Little Attic Room",
-        artwork:
-        "https://archive.org/download/pollyanna_version_4_1808_librivox/pollyanna_v4_porter_1808.jpg",
-      ),
-    ),
-  ]);
+  ConcatenatingAudioSource _playlist ;
   int _addedCount = 0;
-
+  _TellingV2State(this.book);
   @override
   void initState() {
     super.initState();
@@ -66,23 +34,47 @@ class _TellingV2State extends State<TellingV2> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
+
     _init();
   }
-
+  bool loaded_links=false;
   Future<void> _init() async {
+    Repository rep = new Repository();
+    List<AudioFile>files =  await rep.fetchAudioFiles(book.id);
+    developer.log(files[0].title.toString());
+    var v =  files.map((x) => AudioSource.uri(
+      Uri.parse(
+          x.url),
+      tag: AudioMetadata(
+        album: book.title,
+        title: x.title,
+        artwork:
+        "https://archive.org/download/" +
+            book.id + '/__ia_thumb.jpg',
+      ),
+    )).toList();
+    _playlist = ConcatenatingAudioSource(children: v);
+
+
     final session = await AudioSession.instance;
     await session.configure(AudioSessionConfiguration.speech());
-    // Listen to errors during playback.
+    // Listen to errors during playback
     _player.playbackEventStream.listen((event) {},
         onError: (Object e, StackTrace stackTrace) {
           print('A stream error occurred: $e');
         });
     try {
+
       await _player.setAudioSource(_playlist);
     } catch (e) {
       // Catch load errors: 404, invalid url...
       print("Error loading audio source: $e");
     }
+    this.setState(() {
+      loaded_links=true;
+    });
+
+
   }
 
   @override
@@ -101,11 +93,15 @@ class _TellingV2State extends State<TellingV2> {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SafeArea(
-          child: Column(
+
+          child: !loaded_links ? Center(child: SpinKitFoldingCube(color: Colors.blue,
+              size: 50.0)) :
+          Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -117,6 +113,7 @@ class _TellingV2State extends State<TellingV2> {
                 ),
                 child: MadoWidget(),
               ),
+
               Expanded(
                 child: StreamBuilder<SequenceState>(
                   stream: _player.sequenceStateStream,
@@ -260,20 +257,7 @@ class _TellingV2State extends State<TellingV2> {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            _playlist.add(AudioSource.uri(
-              Uri.parse("asset:///audio/nature.mp3"),
-              tag: AudioMetadata(
-                album: "Public Domain",
-                title: "Nature Sounds ${++_addedCount}",
-                artwork:
-                "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
-              ),
-            ));
-          },
-        ),
+
       ),
     );
   }

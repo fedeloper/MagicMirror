@@ -11,7 +11,7 @@ final _latestBooksApi =
     "https://archive.org/advancedsearch.php?$_commonParams&sort[]=addeddate desc&output=json";
 
 final _mostDownloaded =
-    "https://archive.org/advancedsearch.php?$_commonParams&sort[]=downloads desc&rows=10&page=1&output=json";
+    "https://archive.org/advancedsearch.php?$_commonParams&sort[]=downloads desc&rows=500&page=1&output=json";
 final query = "title:(secret tomb) AND collection:(librivoxaudio)";
 
 class ArchiveApiProvider implements Source {

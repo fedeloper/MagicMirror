@@ -1,7 +1,8 @@
 import 'dart:math';
-
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:magic_mirror/components/mado_widget.dart';
 import 'package:magic_mirror/searchstory/repository.dart';
+import 'package:magic_mirror/tellingthestory/tellingv2.dart';
 import 'dart:developer' as developer;
 
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -32,17 +33,20 @@ class _SearchstoryWidgetState extends State<SearchstoryWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController textController;
   List<Book> books=[];
+  List<Book> books_full=[];
   void tt() async {
     Repository rep = new Repository();
 
-    //this.books= ;
-    List<Book> bs = await rep.topBooks();
+    if (books_full.length <5)
+    {
+     books_full = await rep.topBooks();
+    }
 
     String query = textController.text;
 
-    bs.sort((b, a) => a.title.similarityTo(query).compareTo(b.title.similarityTo(query)));
-    addItemToList(bs);
-   // list.forEach((Book b) {  addItemToList(b);});
+    books_full.sort((b, a) => a.title.similarityTo(query).compareTo(b.title.similarityTo(query)));
+    addItemToList(books_full.sublist(0,10));
+
   }
   @override
   void initState() {
@@ -78,7 +82,7 @@ class _SearchstoryWidgetState extends State<SearchstoryWidget> {
       final madoUsersRecord = madoUsersRecordList.first;
       return Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFF4895F7),
+        backgroundColor: Colors.white,
         body: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -168,7 +172,7 @@ class _SearchstoryWidgetState extends State<SearchstoryWidget> {
                                                       padding: EdgeInsets.fromLTRB(
                                                           4, 0, 0, 0),
                                                       child: TextFormField(
-                                                        onFieldSubmitted: (text) {
+                                                        onChanged: (text) {
                                                           tt();
                                                         },
                                                         controller: textController,
@@ -292,121 +296,135 @@ class _SearchstoryWidgetState extends State<SearchstoryWidget> {
             ),
             Expanded(
 
-                child: ListView.builder(
+                child: books.isEmpty ? Center(child: SpinKitFoldingCube(color: Colors.blue,
+                    size: 50.0)) :ListView.builder(
                     padding: const EdgeInsets.all(2),
                     itemCount: max(0,books.length-1 ),
                     itemBuilder: (BuildContext context, int index) {
                       return
-                        Container(
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width,
-                          height: 90,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child:
-                                      Image.network(
-                                        "https://archive.org/download/" +
-                                            books[index].id + '/__ia_thumb.jpg',
-                                        width: 74,
-                                        height: 74,
-                                        fit: BoxFit.cover,
-                                      )
+                        InkWell(
+                          child:  Container(
 
-                                      ,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(8, 1, 0, 0),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              books[index].title,
-                                              overflow: TextOverflow.ellipsis,
-                                              style:
-                                              FlutterFlowTheme.subtitle1
-                                                  .override(
-                                                fontFamily: 'Poppins',
-                                                color: Color(0xFF15212B),
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
+                            height: 90,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child:
+                                        Image.network(
+                                          "https://archive.org/download/" +
+                                              books[index].id + '/__ia_thumb.jpg',
+                                          width: 74,
+                                          height: 74,
+                                          fit: BoxFit.cover,
+                                        )
+
+                                        ,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(8, 1, 0, 0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                books[index].title,
+                                                overflow: TextOverflow.ellipsis,
+                                                style:
+                                                FlutterFlowTheme.subtitle1
+                                                    .override(
+                                                  fontFamily: 'Poppins',
+                                                  color: Color(0xFF15212B),
+                                                ),
                                               ),
-                                            ),
-                                          )
+                                            )
 
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Text(
-                                            "author: " + books[index].author,
-                                            style:
-                                            FlutterFlowTheme.bodyText2.override(
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Text(
-                                            "rating: " +
-                                                books[index].rating.toString() +
-                                                "/5",
-                                            style:
-                                            FlutterFlowTheme.bodyText1.override(
-                                              fontFamily: 'Poppins',
-                                              color: FlutterFlowTheme
-                                                  .primaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    ],
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Text(
+                                              "author: " + books[index].author,
+                                              style:
+                                              FlutterFlowTheme.bodyText2.override(
+                                                fontFamily: 'Poppins',
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Text(
+                                              "rating: " +
+                                                  books[index].rating.toString() +
+                                                  "/5",
+                                              style:
+                                              FlutterFlowTheme.bodyText1.override(
+                                                fontFamily: 'Poppins',
+                                                color: FlutterFlowTheme
+                                                    .primaryColor,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                                      child: Icon(
-                                        Icons.chevron_right_outlined,
-                                        color: Color(0xFF95A1AC),
-                                        size: 24,
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                                        child: Icon(
+                                          Icons.chevron_right_outlined,
+                                          color: Color(0xFF95A1AC),
+                                          size: 24,
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                        )
-                      ;
+                          onTap: () async {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TellingV2(book:books[index]),
+                                ),
+                              );
+
+                          },
+                        );
+
+
                     }
                 ))
             ,

@@ -1,3 +1,7 @@
+import 'dart:math';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:magic_mirror/searchstory/book.dart';
+import 'package:magic_mirror/searchstory/repository.dart';
 import 'package:magic_mirror/tellingthestory/tellingv2.dart';
 
 import '../components/mado_widget.dart';
@@ -19,9 +23,25 @@ class HomePageWidget extends StatefulWidget {
 class _HomePageWidgetState extends State<HomePageWidget> {
   final pageViewController = PageController();
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  List<Book> books=[];
+  void tt() async {
+    Repository rep = new Repository();
+
+    //this.books= ;
+    List<Book> bs = await rep.topBooks();
+
+    addItemToList(bs);
+    // list.forEach((Book b) {  addItemToList(b);});
+  }
+  void addItemToList(List<Book> list){
+    setState(() {
+      this.books=list;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    tt();
     return Scaffold(
       key: scaffoldKey,
       body: SafeArea(
@@ -64,11 +84,15 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
                   child: Stack(
                     children: [
-                      PageView(
-                        controller: pageViewController,
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          Card(
+                      books.isEmpty ? Center(child: SpinKitFoldingCube(color: Colors.blue,
+                        size: 50.0)) : PageView.builder(
+                    controller: pageViewController,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: books.length-1,
+                    itemBuilder: (BuildContext context, int index) {
+                      return
+                        InkWell(
+                          child:  Card(
                             clipBehavior: Clip.antiAliasWithSaveLayer,
                             color: Color(0xFFF5F5F5),
                             elevation: 3,
@@ -78,12 +102,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Image.asset(
-                                  'assets/images/maxresdefault.jpg',
+                                Image.network(
+                                  "https://archive.org/download/" +
+                                      books[index].id + '/__ia_thumb.jpg',
                                   width: double.infinity,
                                   height: 120,
                                   fit: BoxFit.cover,
-                                ),
+                                )
+                               ,
                                 Padding(
                                   padding: EdgeInsets.fromLTRB(15, 15, 15, 25),
                                   child: Column(
@@ -91,14 +117,15 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     children: [
                                       Padding(
                                         padding:
-                                            EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                        EdgeInsets.fromLTRB(0, 10, 0, 0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              'Little Red Riding Hood',
+                                              books[index].title,
+                                          overflow: TextOverflow.fade,
                                               style: FlutterFlowTheme.bodyText1
                                                   .override(
                                                 fontFamily: 'Poppins',
@@ -107,7 +134,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                               ),
                                             ),
                                             Text(
-                                              getCurrentTimestamp.toString(),
+                                              books[index].author,
+                                              overflow: TextOverflow.ellipsis,
                                               style: FlutterFlowTheme.bodyText1
                                                   .override(
                                                 fontFamily: 'Poppins',
@@ -120,9 +148,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       ),
                                       Padding(
                                         padding:
-                                            EdgeInsets.fromLTRB(0, 8, 0, 0),
+                                        EdgeInsets.fromLTRB(0, 8, 0, 0),
                                         child: Text(
-                                          'One beautiful autumn afternoon little Red Riding Hood is sent by her mother to take some goodies to Grandma.',
+                                          books[index].description,
+                                          overflow: TextOverflow.fade,
+                                          maxLines: 4,
                                           style: FlutterFlowTheme.bodyText1
                                               .override(
                                             fontFamily: 'Poppins',
@@ -135,142 +165,21 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                               ],
                             ),
                           ),
-                          Card(
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            color: Color(0xFFF5F5F5),
-                            elevation: 3,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Image.asset(
-                                  'assets/images/download.jpg',
-                                  width: double.infinity,
-                                  height: 120,
-                                  fit: BoxFit.cover,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(15, 15, 15, 25),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'The three Little Pigs',
-                                              style: FlutterFlowTheme.bodyText1
-                                                  .override(
-                                                fontFamily: 'Poppins',
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            Text(
-                                              getCurrentTimestamp.toString(),
-                                              style: FlutterFlowTheme.bodyText1
-                                                  .override(
-                                                fontFamily: 'Poppins',
-                                                color: FlutterFlowTheme
-                                                    .secondaryColor,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 8, 0, 0),
-                                        child: Text(
-                                          'Three pigs who build three houses of different materials. A Big Bad Wolf blows down the first two pigs\' houses, made of straw and sticks respectively, but is unable to destroy the third pig\'s house, made of bricks',
-                                          style: FlutterFlowTheme.bodyText1
-                                              .override(
-                                            fontFamily: 'Poppins',
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Card(
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            color: Color(0xFFF5F5F5),
-                            elevation: 3,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Image.asset(
-                                  'assets/images/download.jpg',
-                                  width: double.infinity,
-                                  height: 120,
-                                  fit: BoxFit.cover,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(15, 15, 15, 25),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'The three Little Pigs',
-                                              style: FlutterFlowTheme.bodyText1
-                                                  .override(
-                                                fontFamily: 'Poppins',
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            Text(
-                                              getCurrentTimestamp.toString(),
-                                              style: FlutterFlowTheme.bodyText1
-                                                  .override(
-                                                fontFamily: 'Poppins',
-                                                color: FlutterFlowTheme
-                                                    .secondaryColor,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 8, 0, 0),
-                                        child: Text(
-                                          'Three pigs who build three houses of different materials. A Big Bad Wolf blows down the first two pigs\' houses, made of straw and sticks respectively, but is unable to destroy the third pig\'s house, made of bricks',
-                                          style: FlutterFlowTheme.bodyText1
-                                              .override(
-                                            fontFamily: 'Poppins',
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+                          onTap: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TellingV2(book:books[index]),
+                              ),
+                            );
+
+                          },
+                        );
+
+
+                    }
+                )
+                      ,
                       Align(
                         alignment: Alignment(0, 0.95),
                         child: Padding(
