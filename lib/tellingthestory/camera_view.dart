@@ -1,10 +1,15 @@
 import 'dart:io';
-
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
+import 'package:image/image.dart' as Im;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+
+
 
 //import 'faceDetection.dart';
 
@@ -18,6 +23,7 @@ class CameraView extends StatefulWidget {
         this.title,
         this.customPaint,
         this.onImage,
+        //this.croppedImage,
         this.initialDirection = CameraLensDirection.back})
       : super(key: key);
 
@@ -25,6 +31,7 @@ class CameraView extends StatefulWidget {
   final CustomPaint customPaint;
   final Function(InputImage inputImage) onImage;
   final CameraLensDirection initialDirection;
+  //Image croppedImage;
 
   @override
   _CameraViewState createState() => _CameraViewState();
@@ -36,6 +43,7 @@ class _CameraViewState extends State<CameraView> {
   File _image;
   ImagePicker _imagePicker;
   int _cameraIndex = 0;
+  Image _croppedImage;
 
   @override
   void initState() {
@@ -78,8 +86,30 @@ class _CameraViewState extends State<CameraView> {
         ],
       ),
       body: _body(),
-      floatingActionButton: _floatingActionButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: SpeedDial(
+        icon: Icons.camera,
+        backgroundColor: Colors.blue,
+        children: [
+          SpeedDialChild(
+            label: "flip camera",
+            child: _floatingActionButton()
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.camera_front_rounded),
+            label: "save image",
+            onTap: () async {
+              final path = join(
+                  (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
+              var takePicture = _controller.takePicture();
+
+              //img_to_save = ImageSource.camera;
+
+            }
+          )
+        ],
+      ),
+      //floatingActionButton: _floatingActionButton(),
+      //floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -158,6 +188,24 @@ class _CameraViewState extends State<CameraView> {
         ),
       ),
     ]);
+  }
+
+  Future _myGetImage(ImageSource source) async {
+    final pickedFile = await _imagePicker?.getImage(source: source);
+    if (pickedFile != null) {
+      _processPickedFile(pickedFile);
+    } else {
+      print('No live feed to store');
+    }
+    setState(() {});
+  }
+
+  Future _myProcessPickedFile(PickedFile pickedFile) async {
+    setState(() {
+      _image = File(pickedFile.path);
+    });
+    final inputImage = InputImage.fromFilePath(pickedFile.path);
+    widget.onImage(inputImage);
   }
 
   Future _getImage(ImageSource source) async {

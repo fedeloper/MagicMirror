@@ -35,6 +35,7 @@ class _MagicMirrorWidget2 extends State<MagicMirrorWidget2> {
   ));
   bool isBusy = false;
   CustomPaint customPaint;
+  Image croppedImage;
 
   @override
   void dispose() {
@@ -68,6 +69,10 @@ class _MagicMirrorWidget2 extends State<MagicMirrorWidget2> {
     );
   }
 
+  Image cropImage(inputImage) {
+
+  }
+
   Future<void> processImage(InputImage inputImage) async {
     if (isBusy) return;
     isBusy = true;
@@ -85,7 +90,9 @@ class _MagicMirrorWidget2 extends State<MagicMirrorWidget2> {
     }
     isBusy = false;
     if (mounted) {
-      setState(() {});
+      setState(() {
+        croppedImage = cropImage(faces);
+      });
     }
   }
 }
