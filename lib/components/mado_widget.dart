@@ -125,6 +125,13 @@ class _MadoWidgetState extends State<MadoWidget> {
                                                 padding: EdgeInsets.fromLTRB(
                                                     4, 0, 0, 0),
                                                 child: TextFormField(
+                                                  onTap: () async {
+    await Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (context) => SearchstoryWidget(),
+    ),
+    );},
                                                   controller: textController,
                                                   obscureText: false,
                                                   decoration: InputDecoration(

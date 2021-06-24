@@ -38,7 +38,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             ),
             shape: BoxShape.rectangle,
           ),
-          child: Column(
+
+          child: Container( child:SingleChildScrollView(
+
+            child: ConstrainedBox(
+    constraints: BoxConstraints.tightFor(
+    height: MediaQuery.of(context).size.height-50,
+    ),
+    child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Container(
@@ -50,9 +57,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 child: MadoWidget(),
               ),
               Divider(),
+
               Expanded(
                 child: Container(
                   width: double.infinity,
+
                   child: Stack(
                     children: [
                       PageView(
@@ -78,7 +87,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 Padding(
                                   padding: EdgeInsets.fromLTRB(15, 15, 15, 25),
                                   child: Column(
-                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Padding(
                                         padding:
@@ -341,6 +350,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           ),
         ),
       ),
-    );
+        ) )));
   }
 }
