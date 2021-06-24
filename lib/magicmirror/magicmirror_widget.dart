@@ -24,6 +24,7 @@ class MagicmirrorWidget extends StatefulWidget {
   _MagicmirrorWidget createState() => _MagicmirrorWidget();
 }
 final scaffoldKey = GlobalKey<ScaffoldState>();
+
 class _MagicmirrorWidget extends State<MagicmirrorWidget> {
   Map<String, List<String>> emotion_corrispondece=
   {"Angry":["The Man Who Knew Too Much"],
