@@ -186,45 +186,45 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
         (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
 
     //final inputImage = Image.file(File(path));
-    final inputImage = InputImage.fromFilePath(path);
+    //File f = new File(path);
 
+    //InputImageData i = new InputImageData(size: size, imageRotation: imageRotation, inputImageFormat: inputImageFormat, planeData: planeData)
+    //var fimg =  FileImage(f);
+    //var conf = ImageConfiguration();
+   // var bts = fimg.createStream(conf).;
+    //developer.log("canaglia");
+
+    InputImage inputImage = new InputImage.fromFilePath(path);
+
+    //developer.log("la larghezza è"+inputImage.inputImageData.getMetaData().toString() );
+    //bool exist = await f.exists();
     //if (isBusy) return null;
 
     isBusy = true;
     final faces = await faceDetector.processImage(inputImage);
     print("bytes:");
-    print(inputImage.bytes);
-    if (inputImage.inputImageData?.size != null &&
-        inputImage.inputImageData?.imageRotation != null) {
 
-      Map<String,int> faceMap = faceDetectorCrop(faces)[0]; //for the moment consider 1 face
-      img.Image originalImage = img.decodeImage(File(path).readAsBytesSync());
-      img.Image faceCrop = img.copyCrop(originalImage, faceMap['x'], faceMap['y'], faceMap['w'], faceMap['h']);
-      File(newpath).writeAsBytesSync(img.encodePng(faceCrop));
 
-    } else {
-      return null;
-    }
-    isBusy = false;
+    Map<String,int> faceMap = faceDetectorCrop(faces)[0]; //for the moment consider 1 face
+    img.Image originalImage = img.decodeImage(File(path).readAsBytesSync());
+    img.Image faceCrop = img.copyCrop(img.copyRotate(originalImage, -90), faceMap['x'], faceMap['y'], faceMap['w'], faceMap['h']);
+    File(newpath).writeAsBytesSync(img.encodePng(faceCrop));
+
     return newpath;
   }
 
   Future classifyImage(path) async {
 
     final inputImage = InputImage.fromFilePath(path);
-    if (isBusy) return;
-    isBusy = true;
+
     final faces = await faceDetector.processImage(inputImage);
-    if (inputImage.inputImageData?.size != null &&
-        inputImage.inputImageData?.imageRotation != null) {
+
       Map<String,int> faceMap = faceDetectorCrop(faces)[0]; //for the moment consider 1 face
       img.Image originalImage = img.decodeImage(File(path).readAsBytesSync());
       img.Image faceCrop = img.copyCrop(originalImage, faceMap['x'], faceMap['y'], faceMap['w'], faceMap['h']);
       File(path).writeAsBytesSync(img.encodePng(faceCrop));
-    } else {
 
-    }
-    isBusy = false;
+
 
 
 
