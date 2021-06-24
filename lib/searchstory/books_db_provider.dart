@@ -120,7 +120,7 @@ class DatabaseHelper implements Cache{
   Future saveBooks(List<Book> books) async {
     books.forEach((Book book)=>saveBook(book));
   }
-
+  @override
   Future<Book> getBook(String id) async{
     var dbClient = await db;
     final maps = await dbClient.query(

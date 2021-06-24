@@ -1,4 +1,10 @@
 import 'dart:io';
+import 'package:magic_mirror/searchstory/book.dart';
+import 'package:magic_mirror/searchstory/books_db_provider.dart';
+import 'package:magic_mirror/searchstory/repository.dart';
+import 'package:magic_mirror/tellingthestory/tellingv2.dart';
+import 'package:tflite/tflite.dart';
+import 'dart:developer' as developer;
 import '../components/mado_widget.dart';
 import '../tellingthestory/tellingthestory_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -19,6 +25,14 @@ class MagicmirrorWidget extends StatefulWidget {
 }
 final scaffoldKey = GlobalKey<ScaffoldState>();
 class _MagicmirrorWidget extends State<MagicmirrorWidget> {
+  Map<String, List<String>> emotion_corrispondece=
+  {"Angry":["The Man Who Knew Too Much"],
+    "Disgust":["Dr. Nikola’s Experiment"],
+    "Fear":["Has a Frog a Soul"],
+   "Happy":["Christmas Carol Collection 2009"],
+    "Sad":["Ghost Stories of an Antiquary"],
+    "Surprise":["The Secret Agent, by Joseph Conrad"],
+    "Neutral":["A Personal Anthology of Shakespeare, compiled by Martin Clifton"]};
   CameraDescription camera;
   CameraController controller;
   bool _isInited = false;
@@ -41,7 +55,30 @@ class _MagicmirrorWidget extends State<MagicmirrorWidget> {
       });
     });
   }
+  Future classifyImage(path) async {
 
+    await Tflite.loadModel(model: "assets/models/model.tflite",labels: "assets/models/labels.txt");
+    var output = await Tflite.runModelOnImage(path: path);
+
+    //final snackBar = SnackBar(content: Text());
+    return output[0]["label"].toString();
+    //ScaffoldMessenger.of(this.context).showSnackBar(snackBar);
+
+  }
+
+   Future<Book> getBook(path) async
+  {
+    var emotion = await classifyImage(path);
+    final snackBar = SnackBar(content: Text(emotion.toString()));
+    final String id = emotion_corrispondece[emotion][0];
+
+    developer.log(id);
+    ScaffoldMessenger.of(this.context).showSnackBar(snackBar);
+
+    Repository rep = new Repository();
+
+    return await rep.getBook(id);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,16 +152,22 @@ class _MagicmirrorWidget extends State<MagicmirrorWidget> {
                  FloatingActionButton(
                   child: Icon(Icons.camera),
                   onPressed: () async {
+
+
                     final path = join(
                         (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
-                    await controller.takePicture(path).then((res) => {
+
+                    await controller.takePicture(path);
+                    var book = await getBook(path);
+                    developer.log(book.toString());
+
                     Navigator.push(
                     context,
                     MaterialPageRoute(
-                    builder: (context) => TellingthestoryWidget(path: path),
+                    builder: (context) => TellingV2(book:book),
                     ),
-                    )
-                    });
+                    );
+
                   },
                 ),
 

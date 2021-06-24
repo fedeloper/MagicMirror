@@ -28,6 +28,11 @@ class Repository {
     return books;
   }
 
+  Future<Book> getBook(String id ) async {
+
+    return await sources[0].book(id);
+  }
+
   Future<List<AudioFile>> fetchAudioFiles(String bookId) async {
     List<AudioFile> audiofiles;
     audiofiles = await caches[0].fetchAudioFiles(bookId);
@@ -44,6 +49,7 @@ abstract class Source {
   Future<List<Book>> fetchBooks(int offset, int limit);
   Future<List<Book>> topBooks();
   Future<List<AudioFile>> fetchAudioFiles(String bookId);
+  Future<Book> book(String bookId);
 }
 
 abstract class Cache{
@@ -51,4 +57,5 @@ abstract class Cache{
   Future saveAudioFiles(List<AudioFile> audiofiles);
   Future<List<Book>> getBooks(int offset, int limit);
   Future<List<AudioFile>> fetchAudioFiles(String bookId);
+  Future<Book> getBook(String bookId);
 }

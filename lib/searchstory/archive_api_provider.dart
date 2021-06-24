@@ -14,6 +14,11 @@ final _mostDownloaded =
     "https://archive.org/advancedsearch.php?$_commonParams&sort[]=downloads desc&rows=500&page=1&output=json";
 final query = "title:(secret tomb) AND collection:(librivoxaudio)";
 
+String get_book_query(String title) {
+  return "https://archive.org/advancedsearch.php?$_commonParams&title:\\\""+ title +"\\\")&rows=1&page=1&output=json";
+}
+
+
 class ArchiveApiProvider implements Source {
   Client client = Client();
 
@@ -43,6 +48,15 @@ class ArchiveApiProvider implements Source {
     Map resJson = json.decode(response.body);
     //developer.log(resJson['response']['docs'][0].toString());
     return Book.fromJsonArray(resJson['response']['docs']);
+  }
+
+  @override
+  Future<Book> book(String title) async {
+    final uu = get_book_query(title);
+    final response = await client.get(Uri.parse("$uu"));
+    Map resJson = json.decode(response.body);
+    //developer.log(resJson['response']['docs'][0].toString());
+    return Book.fromJsonArray(resJson['response']['docs'])[0];
   }
 }
 
