@@ -29,7 +29,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     Repository rep = new Repository();
 
     //this.books= ;
-    List<Book> bs = await rep.topBooks();
+    List<Book> bs = await rep.topBooks(10);
 
     addItemToList(bs);
     // list.forEach((Book b) {  addItemToList(b);});

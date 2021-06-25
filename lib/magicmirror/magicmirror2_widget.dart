@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
+
 import 'package:magic_mirror/magicmirror/cropper.dart';
 import 'package:magic_mirror/searchstory/book.dart';
 import 'package:magic_mirror/searchstory/books_db_provider.dart';
@@ -9,13 +9,8 @@ import 'package:tflite/tflite.dart';
 import 'dart:developer' as developer;
 import '../components/mado_widget.dart';
 import '../tellingthestory/tellingthestory_widget.dart';
-import '../flutter_flow/flutter_flow_theme.dart';
-import '../flutter_flow/flutter_flow_util.dart';
-import '../flutter_flow/flutter_flow_widgets.dart';
-import '../magicmirror/magicmirror_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
 
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -85,16 +80,7 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 1,
-          decoration: BoxDecoration(
-            color: Color(0xFFEEEEEE),
-            image: DecorationImage(
-              fit: BoxFit.fill,
-              image: Image.network(
-                '',
-              ).image,
-            ),
-            shape: BoxShape.rectangle,
-          ),
+
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -157,17 +143,18 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
 
                   await controller.takePicture(path);
 
-                  // Provo a modificare qui la foto
-                  var newpath = await crop(path);
-                  //
+                  await crop(path);
+                  //my_img.inputImageData.getMetaData().values.forEach((element) {print(element); });
+                  //print("width: " + my_img.inputImageData.size.width.toString());
 
-                  //var book = await getBook(path);
-                  //developer.log(book.toString());
+
+                  var book = await getBook(path);
+                  developer.log(book.toString());
 
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DisplayPictureScreen(imagePath: newpath),
+                      builder: (context) => TellingV2(book:book),
                     ),
                   );
 
@@ -180,60 +167,64 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
     );
   }
 
-  Future<String> crop(path) async {
 
-    final newpath = join(
-        (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
 
-    //final inputImage = Image.file(File(path));
-    //File f = new File(path);
+  void crop(path) async {
 
-    //InputImageData i = new InputImageData(size: size, imageRotation: imageRotation, inputImageFormat: inputImageFormat, planeData: planeData)
-    //var fimg =  FileImage(f);
-    //var conf = ImageConfiguration();
-   // var bts = fimg.createStream(conf).;
-    //developer.log("canaglia");
+    InputImage inputImage = new InputImage.fromFile(File(path));
+    //final Size absoluteImageSize = inputImage.inputImageData.size;
+    //final InputImageRotation rotation = inputImage.inputImageData.imageRotation;
 
-    InputImage inputImage = new InputImage.fromFilePath(path);
-
-    //developer.log("la larghezza è"+inputImage.inputImageData.getMetaData().toString() );
-    //bool exist = await f.exists();
-    //if (isBusy) return null;
-
+    if (isBusy) return null;
     isBusy = true;
     final faces = await faceDetector.processImage(inputImage);
-    print("bytes:");
-
 
     Map<String,int> faceMap = faceDetectorCrop(faces)[0]; //for the moment consider 1 face
     img.Image originalImage = img.decodeImage(File(path).readAsBytesSync());
-    img.Image faceCrop = img.copyCrop(img.copyRotate(originalImage, -90), faceMap['x'], faceMap['y'], faceMap['w'], faceMap['h']);
-    File(newpath).writeAsBytesSync(img.encodePng(faceCrop));
 
-    return newpath;
+    img.Image faceCrop = img.grayscale(img.copyCrop(img.copyRotate(originalImage, -90), faceMap['x'], faceMap['y'], faceMap['w'], faceMap['h']));
+    File(path).writeAsBytesSync(img.encodePng(faceCrop));
+
+    isBusy = false;
   }
+
+
 
   Future classifyImage(path) async {
 
+    /*
     final inputImage = InputImage.fromFilePath(path);
-
+    if (isBusy) return;
+    isBusy = true;
     final faces = await faceDetector.processImage(inputImage);
-
+    if (inputImage.inputImageData?.size != null &&
+        inputImage.inputImageData?.imageRotation != null) {
       Map<String,int> faceMap = faceDetectorCrop(faces)[0]; //for the moment consider 1 face
       img.Image originalImage = img.decodeImage(File(path).readAsBytesSync());
       img.Image faceCrop = img.copyCrop(originalImage, faceMap['x'], faceMap['y'], faceMap['w'], faceMap['h']);
       File(path).writeAsBytesSync(img.encodePng(faceCrop));
+    } else {
 
-
+    }
+    isBusy = false;
+     */
 
 
 
     await Tflite.loadModel(model: "assets/models/model.tflite",labels: "assets/models/labels.txt");
-    var output = await Tflite.runModelOnImage(path: path);
+    List output = await Tflite.runModelOnImage(
+        path: path,
+        imageMean: 125.0,   // defaults to 117.0
+        imageStd: 170.0,  // defaults to 1.0
+        numResults: 7,    // defaults to 5
+        threshold: 0.40
+    );
 
 
     //final snackBar = SnackBar(content: Text());
-    return output[0]["label"].toString();
+    print("tmp:" + output.toString());
+    print(output.isEmpty);
+    return output.isEmpty ? "Neutral" : output[0]["label"].toString();
     //ScaffoldMessenger.of(this.context).showSnackBar(snackBar);
 
   }

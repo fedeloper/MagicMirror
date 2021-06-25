@@ -15,6 +15,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.1"
+  animate_icons:
+    dependency: "direct main"
+    description:
+      name: animate_icons
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   ansicolor:
     dependency: transitive
     description:
@@ -323,6 +330,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  flash:
+    dependency: "direct main"
+    description:
+      name: flash
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   flutter:
     dependency: "direct main"
     description: flutter

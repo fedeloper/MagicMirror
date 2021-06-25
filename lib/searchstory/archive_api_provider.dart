@@ -10,8 +10,11 @@ final _commonParams =
 final _latestBooksApi =
     "https://archive.org/advancedsearch.php?$_commonParams&sort[]=addeddate desc&output=json";
 
-final _mostDownloaded =
-    "https://archive.org/advancedsearch.php?$_commonParams&sort[]=downloads desc&rows=500&page=1&output=json";
+String _mostDownloaded(int n)
+{
+  return "https://archive.org/advancedsearch.php?$_commonParams&sort[]=downloads desc&rows="+n.toString()+"&page=1&output=json";
+}
+
 final query = "title:(secret tomb) AND collection:(librivoxaudio)";
 
 String get_book_query(String title) {
@@ -43,8 +46,9 @@ class ArchiveApiProvider implements Source {
   }
 
   @override
-  Future<List<Book>> topBooks() async {
-    final response = await client.get(Uri.parse("$_mostDownloaded"));
+  Future<List<Book>> topBooks(int n) async {
+    String uri = _mostDownloaded(n);
+    final response = await client.get(Uri.parse("$uri"));
     Map resJson = json.decode(response.body);
     //developer.log(resJson['response']['docs'][0].toString());
     return Book.fromJsonArray(resJson['response']['docs']);
@@ -55,7 +59,8 @@ class ArchiveApiProvider implements Source {
     final uu = get_book_query(title);
     final response = await client.get(Uri.parse("$uu"));
     Map resJson = json.decode(response.body);
-    //developer.log(resJson['response']['docs'][0].toString());
+    developer.log(title);
+    developer.log(resJson['response']['docs'][0].toString());
     return Book.fromJsonArray(resJson['response']['docs'])[0];
   }
 }

@@ -1,3 +1,8 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:flash/flash.dart';
+import 'package:path/path.dart';
+import 'package:animate_icons/animate_icons.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +12,10 @@ import 'package:just_audio/just_audio.dart';
 import 'package:magic_mirror/searchstory/audiofile.dart';
 import 'package:magic_mirror/searchstory/book.dart';
 import 'package:magic_mirror/searchstory/repository.dart';
+import 'package:path_provider/path_provider.dart';
 import 'common.dart';
+import 'package:camera/camera.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 import 'dart:developer' as developer;
 import 'package:rxdart/rxdart.dart';
 import '../components/mado_widget.dart';
@@ -22,20 +30,65 @@ class TellingV2 extends StatefulWidget {
 }
 
 class _TellingV2State extends State<TellingV2> {
+  AnimateIconController controller_icon;
+  Timer timer;
   final Book book;
   AudioPlayer _player;
   ConcatenatingAudioSource _playlist ;
   int _addedCount = 0;
+  CameraDescription camera;
+  CameraController controller;
+  bool attention_ai=true;
+  bool secure_ai=true;
+  bool _isInited = false;
+  FaceDetector faceDetector = GoogleMlKit.vision.faceDetector(FaceDetectorOptions(
+    enableContours: true,
+    enableClassification: true,
+  ));
   _TellingV2State(this.book);
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final cameras = await availableCameras();
+      print(cameras);
+      // setState(() {});
+      controller = CameraController(cameras[1], ResolutionPreset.medium);
+      controller.initialize().then((value) => {
+        setState(() {
+          _isInited = true;
+        })
+      });
+    });
+
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => checkEyes());
     _player = AudioPlayer();
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
 
     _init();
+  }
+  Future<void> checkEyes() async {
+    if (_player.playing & (attention_ai | secure_ai )){
+      final path = join(
+          (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
+
+      await controller.takePicture(path);
+      InputImage inputImage = new InputImage.fromFile(File(path));
+      final faces = await faceDetector.processImage(inputImage);
+       if ((faces.length==0) & (attention_ai == true)){
+         _player.stop();
+         showAlertDialog_attention(this.context);
+       }
+      if ((faces.length>1) & (secure_ai == true)){
+        loaded_links= false;
+        _player.stop();
+        showAlertDialog_secure(this.context);
+      }
+
+    }
+
   }
   bool loaded_links=false;
   Future<void> _init() async {
@@ -54,7 +107,7 @@ class _TellingV2State extends State<TellingV2> {
       ),
     )).toList();
     _playlist = ConcatenatingAudioSource(children: v);
-
+    GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
     final session = await AudioSession.instance;
     await session.configure(AudioSessionConfiguration.speech());
@@ -79,6 +132,7 @@ class _TellingV2State extends State<TellingV2> {
 
   @override
   void dispose() {
+    faceDetector.close();
     _player.dispose();
     super.dispose();
   }
@@ -90,10 +144,10 @@ class _TellingV2State extends State<TellingV2> {
           _player.durationStream,
               (position, bufferedPosition, duration) => PositionData(
               position, bufferedPosition, duration ?? Duration.zero));
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-
+    controller_icon = AnimateIconController();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -211,7 +265,7 @@ class _TellingV2State extends State<TellingV2> {
                 ],
               ),
               Container(
-                height: 240.0,
+                height: 150.0,
                 child: StreamBuilder<SequenceState>(
                   stream: _player.sequenceStateStream,
                   builder: (context, snapshot) {
@@ -254,11 +308,149 @@ class _TellingV2State extends State<TellingV2> {
                   },
                 ),
               ),
+              Container(
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Spacer(),Container(
+                      padding: EdgeInsets.fromLTRB(75, 0, 0, 0),
+                      child: AnimateIcons(
+
+                    startIcon:Icons.remove_red_eye,
+                    endIcon:  Icons.panorama_fisheye,
+                    size: 100.0,
+                    controller: controller_icon,
+                    // add this tooltip for the start icon
+                    startTooltip: 'Icons.add_circle',
+                    // add this tooltip for the end icon
+                    endTooltip: 'Icons.add_circle_outline',
+
+                    onStartIconPress: () {
+                      attention_ai=false;
+                      _showBasicsFlash(Duration(milliseconds: 500),"Attention-AI: deactivated");
+
+                      return true;
+                    },
+                    onEndIconPress: () {
+                      attention_ai=true;
+                      _showBasicsFlash(Duration(milliseconds: 500),"Attention-AI: activated");
+                      return true;
+                    },
+                    duration: Duration(milliseconds: 500),
+                    startIconColor: Colors.blue,
+                    endIconColor: Colors.grey,
+                    clockwise: false,
+                  )),Spacer(),AnimateIcons(
+
+                    startIcon:Icons.privacy_tip,
+                    endIcon:  Icons.privacy_tip_rounded,
+                    size: 50.0,
+                    controller: controller_icon,
+                    // add this tooltip for the start icon
+                    startTooltip: 'Icons.add_circle',
+                    // add this tooltip for the end icon
+                    endTooltip: 'Icons.add_circle_outline',
+
+                    onStartIconPress: () {
+                      secure_ai=false;
+                      _showBasicsFlash(Duration(milliseconds: 500),"Privacy-AI: deactivated");
+
+                      return true;
+                    },
+                    onEndIconPress: () {
+                     secure_ai=true;
+                      _showBasicsFlash(Duration(milliseconds: 500),"Privacy-AI: activated");
+                      return true;
+                    },
+                    duration: Duration(milliseconds: 500),
+                    startIconColor: Colors.blue,
+                    endIconColor: Colors.grey,
+                    clockwise: false,
+                  )],
+              )),
             ],
           ),
         ),
 
       ),
+    );
+  }
+  void _showBasicsFlash(
+    Duration duration,
+      String text
+  ) {
+    showFlash(
+      context: this.context,
+      duration: duration,
+      builder: (context, controller) {
+        return Flash(
+          controller: controller,
+          behavior: FlashBehavior.floating,
+          position: FlashPosition.bottom,
+          boxShadows: kElevationToShadow[4],
+          horizontalDismissDirection: HorizontalDismissDirection.horizontal,
+          child: FlashBar(
+            content: Text(text),
+          ),
+        );
+      },
+    );
+  }
+  showAlertDialog_secure(BuildContext context) {
+    // Create button
+    Widget okButton = FlatButton(
+      child: Text("Resume listening"),
+      onPressed: () {
+        loaded_links= true;
+
+        _player.play();
+        Navigator.of(context).pop();
+      },
+    );
+
+    // Create AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Privacy protection"),
+      content: Text("We detected 2 people watching the screen, to avoid an intruder know what are you listening we have obscured the app and stopped the listening. Tip: to deactive this feature tap on the right bottom lock"),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      barrierColor: Colors.black,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+  showAlertDialog_attention(BuildContext context) {
+    // Create button
+    Widget okButton = FlatButton(
+      child: Text("Resume listening"),
+      onPressed: () {
+        _player.play();
+        Navigator.of(context).pop();
+      },
+    );
+
+    // Create AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Not watching the screen"),
+      content: Text("We noticed that you are not watching the screen and we paused the player. Tip: if you want the deactivate this function tap on the bottom-central eye."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }
