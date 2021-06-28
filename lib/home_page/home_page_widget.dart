@@ -124,21 +124,19 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                            (() {
-                                              if (books[index].title.length > 30){
-                                                return books[index].title.substring(0,30)+"...";
-                                              }
-                                              return books[index].title;
-                                }())
-                                              ,
-
+                                              (() {
+                                                if (books[index].title.length > 30){
+                                                  return books[index].title.substring(0,30)+"...";
+                                                }
+                                                return books[index].title;
+                                              }()),
+                                              overflow: TextOverflow.ellipsis,
                                               style: FlutterFlowTheme.bodyText1
                                                   .override(
                                                 fontFamily: 'Poppins',
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w600,
                                               ),
-                                              overflow: TextOverflow.ellipsis,
                                             ),
                                             Text(
                                               books[index].author,

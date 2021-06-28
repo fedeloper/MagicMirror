@@ -14,16 +14,17 @@ import 'package:magic_mirror/searchstory/book.dart';
 import 'package:magic_mirror/searchstory/repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'common.dart';
+import 'dart:developer' as developer;
 import 'package:camera/camera.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
-import 'dart:developer' as developer;
 import 'package:rxdart/rxdart.dart';
 import '../components/mado_widget.dart';
-void main() => runApp(MaterialApp(home:TellingV2()));
+
+void main() => runApp(MaterialApp(home: TellingV2()));
 
 class TellingV2 extends StatefulWidget {
   final Book book;
-  TellingV2({Key key,this.book}) : super(key: key);
+  TellingV2({Key key, this.book}) : super(key: key);
 
   @override
   _TellingV2State createState() => _TellingV2State(this.book);
@@ -34,17 +35,19 @@ class _TellingV2State extends State<TellingV2> {
   Timer timer;
   final Book book;
   AudioPlayer _player;
-  ConcatenatingAudioSource _playlist ;
+  ConcatenatingAudioSource _playlist;
   int _addedCount = 0;
   CameraDescription camera;
   CameraController controller;
-  bool attention_ai=true;
-  bool secure_ai=true;
+  bool attention_ai = true;
+  bool secure_ai = true;
   bool _isInited = false;
-  FaceDetector faceDetector = GoogleMlKit.vision.faceDetector(FaceDetectorOptions(
+  FaceDetector faceDetector =
+      GoogleMlKit.vision.faceDetector(FaceDetectorOptions(
     enableContours: true,
     enableClassification: true,
   ));
+
   _TellingV2State(this.book);
   @override
   void initState() {
@@ -55,12 +58,11 @@ class _TellingV2State extends State<TellingV2> {
       // setState(() {});
       controller = CameraController(cameras[1], ResolutionPreset.medium);
       controller.initialize().then((value) => {
-        setState(() {
-          _isInited = true;
-        })
-      });
+            setState(() {
+              _isInited = true;
+            })
+          });
     });
-
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => checkEyes());
     _player = AudioPlayer();
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -69,65 +71,62 @@ class _TellingV2State extends State<TellingV2> {
 
     _init();
   }
+
   Future<void> checkEyes() async {
-    if (_player.playing & (attention_ai | secure_ai )){
-      final path = join(
-          (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
+    if (_player.playing & (attention_ai | secure_ai)) {
+      final path =
+          join((await getTemporaryDirectory()).path, '${DateTime.now()}.png');
 
       await controller.takePicture(path);
       InputImage inputImage = new InputImage.fromFile(File(path));
       final faces = await faceDetector.processImage(inputImage);
-       if ((faces.length==0) & (attention_ai == true)){
-         _player.stop();
-         showAlertDialog_attention(this.context);
-       }
-      if ((faces.length>1) & (secure_ai == true)){
-        loaded_links= false;
+      if ((faces.length == 0) & (attention_ai == true)) {
+        _player.stop();
+        showAlertDialog_attention(this.context);
+      }
+      if ((faces.length > 1) & (secure_ai == true)) {
+        loaded_links = false;
         _player.stop();
         showAlertDialog_secure(this.context);
       }
-
     }
-
   }
-  bool loaded_links=false;
+
+  bool loaded_links = false;
   Future<void> _init() async {
     Repository rep = new Repository();
-    List<AudioFile>files =  await rep.fetchAudioFiles(book.id);
+    List<AudioFile> files = await rep.fetchAudioFiles(book.id);
     developer.log(files[0].title.toString());
-    var v =  files.map((x) => AudioSource.uri(
-      Uri.parse(
-          x.url),
-      tag: AudioMetadata(
-        album: book.title,
-        title: x.title,
-        artwork:
-        "https://archive.org/download/" +
-            book.id + '/__ia_thumb.jpg',
-      ),
-    )).toList();
+    var v = files
+        .map((x) => AudioSource.uri(
+              Uri.parse(x.url),
+              tag: AudioMetadata(
+                album: book.title,
+                title: x.title,
+                artwork: "https://archive.org/download/" +
+                    book.id +
+                    '/__ia_thumb.jpg',
+              ),
+            ))
+        .toList();
     _playlist = ConcatenatingAudioSource(children: v);
-    GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
     final session = await AudioSession.instance;
     await session.configure(AudioSessionConfiguration.speech());
     // Listen to errors during playback
     _player.playbackEventStream.listen((event) {},
         onError: (Object e, StackTrace stackTrace) {
-          print('A stream error occurred: $e');
-        });
+      print('A stream error occurred: $e');
+    });
     try {
-
       await _player.setAudioSource(_playlist);
     } catch (e) {
       // Catch load errors: 404, invalid url...
       print("Error loading audio source: $e");
     }
     this.setState(() {
-      loaded_links=true;
+      loaded_links = true;
     });
-
-
   }
 
   @override
@@ -142,9 +141,10 @@ class _TellingV2State extends State<TellingV2> {
           _player.positionStream,
           _player.bufferedPositionStream,
           _player.durationStream,
-              (position, bufferedPosition, duration) => PositionData(
+          (position, bufferedPosition, duration) => PositionData(
               position, bufferedPosition, duration ?? Duration.zero));
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     controller_icon = AnimateIconController();
@@ -152,233 +152,241 @@ class _TellingV2State extends State<TellingV2> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SafeArea(
-
-          child: !loaded_links ? Center(child: SpinKitFoldingCube(color: Colors.blue,
-              size: 50.0)) :
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.25,
-                decoration: BoxDecoration(
-                  color: Color(0xFFEEEEEE),
-                ),
-                child: MadoWidget(),
-              ),
-
-              Expanded(
-                child: StreamBuilder<SequenceState>(
-                  stream: _player.sequenceStateStream,
-                  builder: (context, snapshot) {
-                    final state = snapshot.data;
-                    if (state?.sequence.isEmpty ?? true) return SizedBox();
-                    final metadata = state.currentSource.tag as AudioMetadata;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+          child: !loaded_links
+              ? Center(
+                  child: SpinKitFoldingCube(color: Colors.blue, size: 50.0))
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFEEEEEE),
+                      ),
+                      child: MadoWidget(),
+                    ),
+                    Expanded(
+                      child: StreamBuilder<SequenceState>(
+                        stream: _player.sequenceStateStream,
+                        builder: (context, snapshot) {
+                          final state = snapshot.data;
+                          if (state?.sequence.isEmpty ?? true)
+                            return SizedBox();
+                          final metadata =
+                              state.currentSource.tag as AudioMetadata;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child: Image.network(metadata.artwork)),
+                                ),
+                              ),
+                              Text(metadata.album,
+                                  style: Theme.of(context).textTheme.headline6),
+                              Text(metadata.title),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    ControlButtons(_player),
+                    StreamBuilder<PositionData>(
+                      stream: _positionDataStream,
+                      builder: (context, snapshot) {
+                        final positionData = snapshot.data;
+                        return SeekBar(
+                          duration: positionData?.duration ?? Duration.zero,
+                          position: positionData?.position ?? Duration.zero,
+                          bufferedPosition:
+                              positionData?.bufferedPosition ?? Duration.zero,
+                          onChangeEnd: (newPosition) {
+                            _player.seek(newPosition);
+                          },
+                        );
+                      },
+                    ),
+                    SizedBox(height: 8.0),
+                    Row(
                       children: [
+                        StreamBuilder<LoopMode>(
+                          stream: _player.loopModeStream,
+                          builder: (context, snapshot) {
+                            final loopMode = snapshot.data ?? LoopMode.off;
+                            const icons = [
+                              Icon(Icons.repeat, color: Colors.grey),
+                              Icon(Icons.repeat, color: Colors.orange),
+                              Icon(Icons.repeat_one, color: Colors.orange),
+                            ];
+                            const cycleModes = [
+                              LoopMode.off,
+                              LoopMode.all,
+                              LoopMode.one,
+                            ];
+                            final index = cycleModes.indexOf(loopMode);
+                            return IconButton(
+                              icon: icons[index],
+                              onPressed: () {
+                                _player.setLoopMode(cycleModes[
+                                    (cycleModes.indexOf(loopMode) + 1) %
+                                        cycleModes.length]);
+                              },
+                            );
+                          },
+                        ),
                         Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child:
-                            Center(child: Image.network(metadata.artwork)),
+                          child: Text(
+                            "Playlist",
+                            style: Theme.of(context).textTheme.headline6,
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        Text(metadata.album,
-                            style: Theme.of(context).textTheme.headline6),
-                        Text(metadata.title),
+                        StreamBuilder<bool>(
+                          stream: _player.shuffleModeEnabledStream,
+                          builder: (context, snapshot) {
+                            final shuffleModeEnabled = snapshot.data ?? false;
+                            return IconButton(
+                              icon: shuffleModeEnabled
+                                  ? Icon(Icons.shuffle, color: Colors.orange)
+                                  : Icon(Icons.shuffle, color: Colors.grey),
+                              onPressed: () async {
+                                final enable = !shuffleModeEnabled;
+                                if (enable) {
+                                  await _player.shuffle();
+                                }
+                                await _player.setShuffleModeEnabled(enable);
+                              },
+                            );
+                          },
+                        ),
                       ],
-                    );
-                  },
-                ),
-              ),
-              ControlButtons(_player),
-              StreamBuilder<PositionData>(
-                stream: _positionDataStream,
-                builder: (context, snapshot) {
-                  final positionData = snapshot.data;
-                  return SeekBar(
-                    duration: positionData?.duration ?? Duration.zero,
-                    position: positionData?.position ?? Duration.zero,
-                    bufferedPosition:
-                    positionData?.bufferedPosition ?? Duration.zero,
-                    onChangeEnd: (newPosition) {
-                      _player.seek(newPosition);
-                    },
-                  );
-                },
-              ),
-              SizedBox(height: 8.0),
-              Row(
-                children: [
-                  StreamBuilder<LoopMode>(
-                    stream: _player.loopModeStream,
-                    builder: (context, snapshot) {
-                      final loopMode = snapshot.data ?? LoopMode.off;
-                      const icons = [
-                        Icon(Icons.repeat, color: Colors.grey),
-                        Icon(Icons.repeat, color: Colors.orange),
-                        Icon(Icons.repeat_one, color: Colors.orange),
-                      ];
-                      const cycleModes = [
-                        LoopMode.off,
-                        LoopMode.all,
-                        LoopMode.one,
-                      ];
-                      final index = cycleModes.indexOf(loopMode);
-                      return IconButton(
-                        icon: icons[index],
-                        onPressed: () {
-                          _player.setLoopMode(cycleModes[
-                          (cycleModes.indexOf(loopMode) + 1) %
-                              cycleModes.length]);
-                        },
-                      );
-                    },
-                  ),
-                  Expanded(
-                    child: Text(
-                      "Playlist",
-                      style: Theme.of(context).textTheme.headline6,
-                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  StreamBuilder<bool>(
-                    stream: _player.shuffleModeEnabledStream,
-                    builder: (context, snapshot) {
-                      final shuffleModeEnabled = snapshot.data ?? false;
-                      return IconButton(
-                        icon: shuffleModeEnabled
-                            ? Icon(Icons.shuffle, color: Colors.orange)
-                            : Icon(Icons.shuffle, color: Colors.grey),
-                        onPressed: () async {
-                          final enable = !shuffleModeEnabled;
-                          if (enable) {
-                            await _player.shuffle();
-                          }
-                          await _player.setShuffleModeEnabled(enable);
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
-              Container(
-                height: 150.0,
-                child: StreamBuilder<SequenceState>(
-                  stream: _player.sequenceStateStream,
-                  builder: (context, snapshot) {
-                    final state = snapshot.data;
-                    final sequence = state?.sequence ?? [];
-                    return ReorderableListView(
-                      onReorder: (int oldIndex, int newIndex) {
-                        if (oldIndex < newIndex) newIndex--;
-                        _playlist.move(oldIndex, newIndex);
-                      },
-                      children: [
-                        for (var i = 0; i < sequence.length; i++)
-                          Dismissible(
-                            key: ValueKey(sequence[i]),
-                            background: Container(
-                              color: Colors.redAccent,
-                              alignment: Alignment.centerRight,
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: Icon(Icons.delete, color: Colors.white),
-                              ),
-                            ),
-                            onDismissed: (dismissDirection) {
-                              _playlist.removeAt(i);
+                    Container(
+                      height: 150.0,
+                      child: StreamBuilder<SequenceState>(
+                        stream: _player.sequenceStateStream,
+                        builder: (context, snapshot) {
+                          final state = snapshot.data;
+                          final sequence = state?.sequence ?? [];
+                          return ReorderableListView(
+                            onReorder: (int oldIndex, int newIndex) {
+                              if (oldIndex < newIndex) newIndex--;
+                              _playlist.move(oldIndex, newIndex);
                             },
-                            child: Material(
-                              color: i == state.currentIndex
-                                  ? Colors.grey.shade300
-                                  : null,
-                              child: ListTile(
-                                title: Text(sequence[i].tag.title as String),
-                                onTap: () {
-                                  _player.seek(Duration.zero, index: i);
-                                },
-                              ),
-                            ),
-                          ),
+                            children: [
+                              for (var i = 0; i < sequence.length; i++)
+                                Dismissible(
+                                  key: ValueKey(sequence[i]),
+                                  background: Container(
+                                    color: Colors.redAccent,
+                                    alignment: Alignment.centerRight,
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: Icon(Icons.delete,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                  onDismissed: (dismissDirection) {
+                                    _playlist.removeAt(i);
+                                  },
+                                  child: Material(
+                                    color: i == state.currentIndex
+                                        ? Colors.grey.shade300
+                                        : null,
+                                    child: ListTile(
+                                      title:
+                                          Text(sequence[i].tag.title as String),
+                                      onTap: () {
+                                        _player.seek(Duration.zero, index: i);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    Container(
+                        child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Spacer(),
+                        Container(
+                            padding: EdgeInsets.fromLTRB(75, 0, 0, 0),
+                            child: AnimateIcons(
+                              startIcon: Icons.visibility,
+                              endIcon: Icons.hearing,//visibility_off,
+                              size: 50.0,
+                              controller: controller_icon,
+                              // add this tooltip for the start icon
+                              startTooltip: 'Attention Mode',
+                              // add this tooltip for the end icon
+                              endTooltip: 'Relax Mode',
+
+                              onStartIconPress: () {
+                                attention_ai = false;
+                                _showBasicsFlash(Duration(milliseconds: 500),
+                                    "Attention-AI: deactivated");
+
+                                return true;
+                              },
+                              onEndIconPress: () {
+                                attention_ai = true;
+                                _showBasicsFlash(Duration(milliseconds: 500),
+                                    "Attention-AI: activated");
+                                return true;
+                              },
+                              duration: Duration(milliseconds: 500),
+                              startIconColor: Colors.blueAccent,
+                              endIconColor: Colors.blueAccent,
+                              clockwise: false,
+                            )),
+                        Spacer(),
+                        AnimateIcons(
+                          startIcon: Icons.person,
+                          endIcon: Icons.groups,
+                          size: 50.0,
+                          controller: controller_icon,
+                          // add this tooltip for the start icon
+                          startTooltip: 'Single Mode',
+                          // add this tooltip for the end icon
+                          endTooltip: 'Group Mode',
+
+                          onStartIconPress: () {
+                            secure_ai = false;
+                            _showBasicsFlash(Duration(milliseconds: 500),
+                                "Privacy-AI: deactivated");
+
+                            return true;
+                          },
+                          onEndIconPress: () {
+                            secure_ai = true;
+                            _showBasicsFlash(Duration(milliseconds: 500),
+                                "Privacy-AI: activated");
+                            return true;
+                          },
+                          duration: Duration(milliseconds: 500),
+                          startIconColor: Colors.blueAccent,
+                          endIconColor: Colors.blueAccent,
+                          clockwise: false,
+                        )
                       ],
-                    );
-                  },
+                    )),
+                  ],
                 ),
-              ),
-              Container(
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Spacer(),Container(
-                      padding: EdgeInsets.fromLTRB(75, 0, 0, 0),
-                      child: AnimateIcons(
-
-                    startIcon:Icons.remove_red_eye,
-                    endIcon:  Icons.panorama_fisheye,
-                    size: 100.0,
-                    controller: controller_icon,
-                    // add this tooltip for the start icon
-                    startTooltip: 'Icons.add_circle',
-                    // add this tooltip for the end icon
-                    endTooltip: 'Icons.add_circle_outline',
-
-                    onStartIconPress: () {
-                      attention_ai=false;
-                      _showBasicsFlash(Duration(milliseconds: 500),"Attention-AI: deactivated");
-
-                      return true;
-                    },
-                    onEndIconPress: () {
-                      attention_ai=true;
-                      _showBasicsFlash(Duration(milliseconds: 500),"Attention-AI: activated");
-                      return true;
-                    },
-                    duration: Duration(milliseconds: 500),
-                    startIconColor: Colors.blue,
-                    endIconColor: Colors.grey,
-                    clockwise: false,
-                  )),Spacer(),AnimateIcons(
-
-                    startIcon:Icons.privacy_tip,
-                    endIcon:  Icons.privacy_tip_rounded,
-                    size: 50.0,
-                    controller: controller_icon,
-                    // add this tooltip for the start icon
-                    startTooltip: 'Icons.add_circle',
-                    // add this tooltip for the end icon
-                    endTooltip: 'Icons.add_circle_outline',
-
-                    onStartIconPress: () {
-                      secure_ai=false;
-                      _showBasicsFlash(Duration(milliseconds: 500),"Privacy-AI: deactivated");
-
-                      return true;
-                    },
-                    onEndIconPress: () {
-                     secure_ai=true;
-                      _showBasicsFlash(Duration(milliseconds: 500),"Privacy-AI: activated");
-                      return true;
-                    },
-                    duration: Duration(milliseconds: 500),
-                    startIconColor: Colors.blue,
-                    endIconColor: Colors.grey,
-                    clockwise: false,
-                  )],
-              )),
-            ],
-          ),
         ),
-
       ),
     );
   }
-  void _showBasicsFlash(
-    Duration duration,
-      String text
-  ) {
+
+  void _showBasicsFlash(Duration duration, String text) {
     showFlash(
       context: this.context,
       duration: duration,
@@ -396,12 +404,13 @@ class _TellingV2State extends State<TellingV2> {
       },
     );
   }
+
   showAlertDialog_secure(BuildContext context) {
     // Create button
     Widget okButton = FlatButton(
       child: Text("Resume listening"),
       onPressed: () {
-        loaded_links= true;
+        loaded_links = true;
 
         _player.play();
         Navigator.of(context).pop();
@@ -411,7 +420,8 @@ class _TellingV2State extends State<TellingV2> {
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text("Privacy protection"),
-      content: Text("We detected 2 people watching the screen, to avoid an intruder know what are you listening we have obscured the app and stopped the listening. Tip: to deactive this feature tap on the right bottom lock"),
+      content: Text(
+          "We detected 2 people watching the screen, to avoid an intruder know what are you listening we have obscured the app and stopped the listening. Tip: to deactive this feature tap on the right bottom lock"),
       actions: [
         okButton,
       ],
@@ -426,6 +436,7 @@ class _TellingV2State extends State<TellingV2> {
       },
     );
   }
+
   showAlertDialog_attention(BuildContext context) {
     // Create button
     Widget okButton = FlatButton(
@@ -439,7 +450,8 @@ class _TellingV2State extends State<TellingV2> {
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text("Not watching the screen"),
-      content: Text("We noticed that you are not watching the screen and we paused the player. Tip: if you want the deactivate this function tap on the bottom-central eye."),
+      content: Text(
+          "We noticed that you are not watching the screen and we paused the player. Tip: if you want the deactivate this function tap on the bottom-central eye."),
       actions: [
         okButton,
       ],

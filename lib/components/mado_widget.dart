@@ -1,3 +1,5 @@
+import 'package:magic_mirror/accountpage/userPreferences.dart';
+
 import '../accountpage/accountpage_widget.dart';
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
@@ -126,12 +128,14 @@ class _MadoWidgetState extends State<MadoWidget> {
                                                     4, 0, 0, 0),
                                                 child: TextFormField(
                                                   onTap: () async {
-    await Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => SearchstoryWidget(),
-    ),
-    );},
+                                                    await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            SearchstoryWidget(),
+                                                      ),
+                                                    );
+                                                  },
                                                   controller: textController,
                                                   obscureText: false,
                                                   decoration: InputDecoration(
@@ -241,14 +245,28 @@ class _MadoWidgetState extends State<MadoWidget> {
                         ),
                       ),
                       Align(
-                        alignment: Alignment(-0.69, -0.83),
-                        child: Text(
-                          madoUsersRecord.username,
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
+                        alignment: Alignment(0.95, -0.90),
+                        child: InkWell(
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    userPreferencesWidget(madoUsersRecord),
+                              ),
+                            );
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: Text(
+                              madoUsersRecord.username,
+                              style: FlutterFlowTheme.bodyText1.override(
+                                fontFamily: "Poppins",
+                              ),
+                            ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 )
