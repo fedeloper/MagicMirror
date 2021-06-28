@@ -1,5 +1,7 @@
 import 'dart:io';
-
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:magic_mirror/magicmirror/cropper.dart';
 import 'package:magic_mirror/searchstory/book.dart';
 import 'package:magic_mirror/searchstory/books_db_provider.dart';
@@ -9,8 +11,13 @@ import 'package:tflite/tflite.dart';
 import 'dart:developer' as developer;
 import '../components/mado_widget.dart';
 import '../tellingthestory/tellingthestory_widget.dart';
+import '../flutter_flow/flutter_flow_theme.dart';
+import '../flutter_flow/flutter_flow_util.dart';
+import '../flutter_flow/flutter_flow_widgets.dart';
+import '../magicmirror/magicmirror_widget.dart';
 import 'package:flutter/material.dart';
-
+import 'package:google_fonts/google_fonts.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -80,7 +87,16 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 1,
-
+          decoration: BoxDecoration(
+            color: Color(0xFFEEEEEE),
+            image: DecorationImage(
+              fit: BoxFit.fill,
+              image: Image.network(
+                '',
+              ).image,
+            ),
+            shape: BoxShape.rectangle,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -154,7 +170,7 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => TellingV2(book:book),
+                      builder: (context) => DisplayPictureScreen(imagePath: path),
                     ),
                   );
 
