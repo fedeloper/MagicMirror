@@ -22,9 +22,9 @@ class Repository {
     }
     return books;
   }
-  Future<List<Book>> topBooks() async {
+  Future<List<Book>> topBooks(int n) async {
     List<Book> books;
-    books = await sources[0].topBooks();
+    books = await sources[0].topBooks(n);
     return books;
   }
 
@@ -47,7 +47,7 @@ class Repository {
 
 abstract class Source {
   Future<List<Book>> fetchBooks(int offset, int limit);
-  Future<List<Book>> topBooks();
+  Future<List<Book>> topBooks(int n);
   Future<List<AudioFile>> fetchAudioFiles(String bookId);
   Future<Book> book(String bookId);
 }

@@ -29,7 +29,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     Repository rep = new Repository();
 
     //this.books= ;
-    List<Book> bs = await rep.topBooks();
+    List<Book> bs = await rep.topBooks(3);
 
     addItemToList(bs);
     // list.forEach((Book b) {  addItemToList(b);});
@@ -89,7 +89,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         size: 50.0)) : PageView.builder(
                     controller: pageViewController,
                     scrollDirection: Axis.horizontal,
-                    itemCount: books.length-1,
+                    itemCount: books.length,
                     itemBuilder: (BuildContext context, int index) {
                       return
                         InkWell(
@@ -121,12 +121,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                         EdgeInsets.fromLTRB(0, 10, 0, 0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              books[index].title,
-                                          overflow: TextOverflow.fade,
+                                              (() {
+                                                if (books[index].title.length > 30){
+                                                  return books[index].title.substring(0,30)+"...";
+                                                }
+                                                return books[index].title;
+                                              }()),
+                                              overflow: TextOverflow.ellipsis,
                                               style: FlutterFlowTheme.bodyText1
                                                   .override(
                                                 fontFamily: 'Poppins',

@@ -35,7 +35,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     confirmPasswordTextController = TextEditingController();
     passwordVisibility2 = false;
     emailTextController = TextEditingController();
-    textController1 = TextEditingController(text: 'Age');
+    textController1 = TextEditingController();
     textController2 = TextEditingController();
     passwordTextController = TextEditingController();
     passwordVisibility1 = false;
@@ -211,12 +211,28 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                         Padding(
                                           padding:
                                           EdgeInsets.fromLTRB(24, 0, 40, 0),
-                                          child: Text(
-                                            'Sex',
-                                            style: FlutterFlowTheme.bodyText1
-                                                .override(
-                                              fontFamily: 'Poppins',
+                                          child: DropdownButton<String>(
+                                            value: dropDownValue,
+                                            hint: Text("Gender Identity"),
+                                            icon: const Icon(Icons.arrow_downward_rounded),
+                                            iconSize: 20,
+                                            elevation: 16,
+                                            style: const TextStyle(color: Colors.black),
+                                            underline: Container(
+                                              height: 2,
+                                              color: Color(0xFF0F2A58),
                                             ),
+                                            onChanged: (String newValue) {
+                                              setState(() {
+                                                dropDownValue = newValue;
+                                              });
+                                            },
+                                            items: <String>["Woman", "Man"].map<DropdownMenuItem<String>>((String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
                                           ),
                                         ),
 

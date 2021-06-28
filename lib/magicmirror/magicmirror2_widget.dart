@@ -82,34 +82,63 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+
+        child: Icon(Icons.camera),
+        onPressed: () async {
+
+          final path = join(
+              (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
+
+          await controller.takePicture(path);
+
+          await crop(path);
+
+
+          var book = await getBook(path);
+          print("Book: " + book.title);
+          developer.log(book.toString());
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TellingV2(book:book)//DisplayPictureScreen(imagePath: path),
+            ),
+          );
+
+        },
+      ),
       key: scaffoldKey,
       body: SafeArea(
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 1,
-          decoration: BoxDecoration(
-            color: Color(0xFFEEEEEE),
-            image: DecorationImage(
-              fit: BoxFit.fill,
-              image: Image.network(
-                '',
-              ).image,
-            ),
-            shape: BoxShape.rectangle,
-          ),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
+
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.25,
+                height: MediaQuery.of(context).size.height * 0.20,
                 decoration: BoxDecoration(
                   color: Color(0x52EEEEEE),
                 ),
-                child: MadoWidget(),
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: DefaultTextStyle.of(context).style,
+                    children: <TextSpan> [
+                      TextSpan(text: "\nTry out the \n" , style: TextStyle(fontWeight: FontWeight.normal, fontSize: 20, fontStyle: FontStyle.normal, color: Colors.black, decoration: TextDecoration.none)),
+                      TextSpan(text: "Magic Mirror", style: GoogleFonts.marckScript(fontStyle: FontStyle.italic, color: Colors.black, decoration: TextDecoration.none))
+                    ]
+                  ),
+                ) //MadoWidget(),
               ),
-              Divider(),
+
+              //Divider(),
               Expanded(
+                flex: 2,
                 child: Container(
                     width: double.infinity,
                     child: _isInited
@@ -148,11 +177,15 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
                   ],
                 ),
               ),
-              Divider(),
+              Container(
+                height: 35,
+
+              )
+              /*
               FloatingActionButton(
+
                 child: Icon(Icons.camera),
                 onPressed: () async {
-
 
                   final path = join(
                       (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
@@ -160,22 +193,22 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
                   await controller.takePicture(path);
 
                   await crop(path);
-                  //my_img.inputImageData.getMetaData().values.forEach((element) {print(element); });
-                  //print("width: " + my_img.inputImageData.size.width.toString());
 
 
                   var book = await getBook(path);
+                  print("Book: " + book.title);
                   developer.log(book.toString());
 
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DisplayPictureScreen(imagePath: path),
+                      builder: (context) => TellingV2(book:book)//DisplayPictureScreen(imagePath: path),
                     ),
                   );
 
                 },
               ),
+              */
             ],
           ),
         ),

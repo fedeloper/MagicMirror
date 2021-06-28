@@ -39,7 +39,7 @@ class _SearchstoryWidgetState extends State<SearchstoryWidget> {
 
     if (books_full.length <5)
     {
-     books_full = await rep.topBooks();
+     books_full = await rep.topBooks(300);
      books_full.forEach((element) {developer.log(element.title);});
     }
 
