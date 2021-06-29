@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:magic_mirror/accountpage/userPreferences.dart';
 import 'package:magic_mirror/components/mado_widget.dart';
 import 'package:magic_mirror/home_page/home_page_widget.dart';
 import 'package:magic_mirror/searchstory/repository.dart';
@@ -90,7 +91,7 @@ class _SearchstoryWidgetState extends State<SearchstoryWidget> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
+            BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings")
           ],
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.amber[700],
@@ -259,6 +260,7 @@ class _SearchstoryWidgetState extends State<SearchstoryWidget> {
                                                       ),
                                                     ),
                                                   ),
+                                                  /*
                                                   Expanded(
                                                     child: Align(
                                                       alignment: Alignment(0.95, 0),
@@ -269,6 +271,7 @@ class _SearchstoryWidgetState extends State<SearchstoryWidget> {
                                                       ),
                                                     ),
                                                   )
+                                                  */
                                                 ],
                                               ),
                                             ),
@@ -305,14 +308,28 @@ class _SearchstoryWidgetState extends State<SearchstoryWidget> {
                               ),
                             ),
                             Align(
-                              alignment: Alignment(-0.69, -0.83),
-                              child: Text(
-                                madoUsersRecord.username,
-                                style: FlutterFlowTheme.bodyText1.override(
-                                  fontFamily: 'Poppins',
+                              alignment: Alignment(0.95, -0.90),
+                              child: InkWell(
+                                onTap: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          userPreferencesWidget(madoUsersRecord),
+                                    ),
+                                  );
+                                },
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: Text(
+                                    madoUsersRecord.username,
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: "Poppins",
+                                    ),
+                                  ),
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       )

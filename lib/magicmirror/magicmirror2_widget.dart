@@ -136,9 +136,11 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
                 child: Column(
 
                     children:  [
-                      Text("\nTry out the \n",style: TextStyle(fontSize: 15),),
+                      //Text("\nTry out the \n",style: TextStyle(fontSize: 15),),
+                      Text("\n"),
                       Image.asset('assets/images/c874bc5649ca63dd5a11ae9ececfad05.png', fit: BoxFit.cover,height:50),
-                      Text("Take a photo of your face and \nwe will choose a story for you! ",style: TextStyle(fontSize: 15),maxLines: 2,overflow: TextOverflow
+                      Container(height: 20,),
+                      Text("Take a photo of your face and \nwe will choose a story for you! ",style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),maxLines: 2,overflow: TextOverflow
                           .ellipsis,),
   ]
               )),

@@ -64,7 +64,8 @@ class ImageTextButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+      shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
       clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: onPressed,
@@ -141,302 +142,372 @@ class HomeState extends State<Home> {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * 0.25,
-                            decoration: BoxDecoration(
-                              color: Color(0x52EEEEEE),
-                            ),
-                            child: MadoWidget(),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.25,
+                          decoration: BoxDecoration(
+                            color: Color(0x52EEEEEE),
                           ),
+                          child: MadoWidget(),
+                        ),
 
-                          Container(
-                            height: 300,
-                            width: double.infinity,
-                            child: Stack(
-                              children: [
-                                books.isEmpty
-                                    ? Center(
-                                        child: SpinKitFoldingCube(
-                                            color: Colors.blue, size: 50.0))
-                                    : PageView.builder(
-                                        controller: pageViewController,
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: books.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return InkWell(
-                                            child: Container(
-                                              height: 500,
-                                              child: Card(
-                                                margin: EdgeInsets.all(4.0),
-                                                clipBehavior:
-                                                    Clip.antiAliasWithSaveLayer,
-                                                color: Color(0xFFF5F5F5),
-                                                elevation: 3,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    Image.network(
-                                                      "https://archive.org/download/" +
-                                                          books[index].id +
-                                                          '/__ia_thumb.jpg',
-                                                      width: double.infinity,
-                                                      height: 120,
-                                                      fit: BoxFit.cover,
-                                                    ),
-
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.fromLTRB(
-                                                              15, 15, 15, 25),
-                                                      child: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          Container(
-                                                            child: Text(
-                                                              "Suggested Story #"+ (index+1).toString(),
-                                                              //style: GoogleFonts.cutiveMono(fontSize: 25, fontWeight: FontWeight.bold),
-                                                            ) ,
+                        Container(
+                          height: 300,
+                          width: double.infinity,
+                          child: Stack(
+                            children: [
+                              books.isEmpty
+                                  ? Center(
+                                      child: SpinKitFoldingCube(
+                                          color: Colors.blue, size: 50.0))
+                                  : PageView.builder(
+                                      controller: pageViewController,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: books.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return InkWell(
+                                          child: Container(
+                                            height: 500,
+                                            child: Card(
+                                              margin: EdgeInsets.all(4.0),
+                                              clipBehavior:
+                                                  Clip.antiAliasWithSaveLayer,
+                                              color: Color(0xFFF5F5F5),
+                                              elevation: 3,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Image.network(
+                                                    "https://archive.org/download/" +
+                                                        books[index].id +
+                                                        '/__ia_thumb.jpg',
+                                                    width: double.infinity,
+                                                    height: 120,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            15, 15, 15, 25),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Container(
+                                                          child: Text(
+                                                            "Suggested Story #" +
+                                                                (index + 1)
+                                                                    .toString(),
+                                                            //style: GoogleFonts.cutiveMono(fontSize: 25, fontWeight: FontWeight.bold),
                                                           ),
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .fromLTRB(
-                                                                    0, 10, 0, 0),
-                                                            child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  (() {
-                                                                    if (books[index]
+                                                        ),
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                                  0, 10, 0, 0),
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                (() {
+                                                                  if (books[index]
+                                                                          .title
+                                                                          .length >
+                                                                      30) {
+                                                                    return books[index]
                                                                             .title
-                                                                            .length >
-                                                                        30) {
-                                                                      return books[index]
-                                                                              .title
-                                                                              .substring(0,
-                                                                                  30) +
-                                                                          "...";
-                                                                    }
-                                                                    return books[
-                                                                            index]
-                                                                        .title;
-                                                                  }()),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                  style: FlutterFlowTheme
-                                                                      .bodyText1
-                                                                      .override(
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontSize: 15,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                  ),
+                                                                            .substring(0,
+                                                                                30) +
+                                                                        "...";
+                                                                  }
+                                                                  return books[
+                                                                          index]
+                                                                      .title;
+                                                                }()),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: FlutterFlowTheme
+                                                                    .bodyText1
+                                                                    .override(
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
                                                                 ),
-                                                                Text(
-                                                                  books[index]
-                                                                      .author,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                  style: FlutterFlowTheme
-                                                                      .bodyText1
-                                                                      .override(
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    color: FlutterFlowTheme
-                                                                        .secondaryColor,
-                                                                  ),
-                                                                )
-                                                              ],
+                                                              ),
+                                                              Text(
+                                                                books[index]
+                                                                    .author,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: FlutterFlowTheme
+                                                                    .bodyText1
+                                                                    .override(
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  color: FlutterFlowTheme
+                                                                      .secondaryColor,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                                  0, 8, 0, 0),
+                                                          child: Text(
+                                                            books[index]
+                                                                .description,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .fade,
+                                                            maxLines: 3,
+                                                            style:
+                                                                FlutterFlowTheme
+                                                                    .bodyText1
+                                                                    .override(
+                                                              fontFamily:
+                                                                  'Poppins',
                                                             ),
                                                           ),
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .fromLTRB(
-                                                                    0, 8, 0, 0),
-                                                            child: Text(
-                                                              books[index]
-                                                                  .description,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .fade,
-                                                              maxLines: 3,
-                                                              style:
-                                                                  FlutterFlowTheme
-                                                                      .bodyText1
-                                                                      .override(
-                                                                fontFamily:
-                                                                    'Poppins',
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
                                               ),
                                             ),
-                                            onTap: () async {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      TellingV2(
-                                                          book: books[index]),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        }),
-                                Align(
-                                  alignment: Alignment(0, 0.95),
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                                    child: SmoothPageIndicator(
-                                      controller: pageViewController,
-                                      count: 3,
-                                      axisDirection: Axis.horizontal,
-                                      onDotClicked: (i) {
-                                        pageViewController.animateToPage(
-                                          i,
-                                          duration: Duration(milliseconds: 500),
-                                          curve: Curves.ease,
+                                          ),
+                                          onTap: () async {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => TellingV2(
+                                                    book: books[index]),
+                                              ),
+                                            );
+                                          },
                                         );
-                                      },
-                                      effect: ExpandingDotsEffect(
-                                        expansionFactor: 2,
-                                        spacing: 8,
-                                        radius: 16,
-                                        dotWidth: 16,
-                                        dotHeight: 16,
-                                        dotColor: Color(0xFF9E9E9E),
-                                        activeDotColor: Color(0xFF3F51B5),
-                                        paintStyle: PaintingStyle.fill,
-                                      ),
+                                      }),
+                              Align(
+                                alignment: Alignment(0, 0.95),
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                                  child: SmoothPageIndicator(
+                                    controller: pageViewController,
+                                    count: 3,
+                                    axisDirection: Axis.horizontal,
+                                    onDotClicked: (i) {
+                                      pageViewController.animateToPage(
+                                        i,
+                                        duration: Duration(milliseconds: 500),
+                                        curve: Curves.ease,
+                                      );
+                                    },
+                                    effect: ExpandingDotsEffect(
+                                      expansionFactor: 2,
+                                      spacing: 8,
+                                      radius: 16,
+                                      dotWidth: 16,
+                                      dotHeight: 16,
+                                      dotColor: Color(0xFF9E9E9E),
+                                      activeDotColor: Color(0xFF3F51B5),
+                                      paintStyle: PaintingStyle.fill,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        //Divider(),
-                InkWell(
-                child: Container(
-                height: 260,
-                    child: Card(
-                    margin: EdgeInsets.all(4.0),
-                clipBehavior:
-                Clip.antiAliasWithSaveLayer,
-                color: Color(0xFFF5F5F5),
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                  BorderRadius.circular(20),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-
-                    Image.network(
-                      'https://thumbs.dreamstime.com/b/pink-magic-mirror-cartoon-wonderful-64577704.jpg',
-                      width: double.infinity,
-                      height: 120,
-                      fit: BoxFit.cover,
-                    ),
-
-                    Padding(
-                      padding:
-                      EdgeInsets.fromLTRB(
-                          15, 15, 15, 25),
-                      child: Column(
-                        mainAxisSize:
-                        MainAxisSize.min,
-                        children: [
-                           Padding(
-                            padding: EdgeInsets
-                                .fromLTRB(
-                                0, 10, 0, 0),
-                            child: Row(
-                              mainAxisSize:
-                              MainAxisSize
-                                  .max,
-                              mainAxisAlignment:
-                              MainAxisAlignment
-                                  .spaceBetween,
-                              children: [
-                                Text("Let's try the Magic Mirror"
-                                ),
-                                Text(
-                                  "Face Emotion",
-                                  overflow:
-                                  TextOverflow
-                                      .ellipsis,
-                                  style: FlutterFlowTheme
-                                      .bodyText1
-                                      .override(
-                                    fontFamily:
-                                    'Poppins',
-                                    color: FlutterFlowTheme
-                                        .secondaryColor,
+                        ),
+                        Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              const ListTile(
+                                leading: Icon(Icons.face),
+                                title: Text('Magic Mirror'),
+                                subtitle: Text('Let the Mirror choose a story for you!'),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                child: ClipOval(
+                                  child: Image.asset(
+                                    'assets/images/pink-magic-mirror-cartoon-wonderful-64577704.jpg',
+                                    width: 100,//MediaQuery.of(context).size.width * 0.6,
+                                    height: 110,
+                                    fit: BoxFit.fitWidth,
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  TextButton(
+                                    child: const Text('Try it!'),
+                                    onPressed: () async {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+
+                                          builder: (context) =>
+                                              MagicMirror2Widget(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(width: 8),
+                                  TextButton(
+                                    child: const Text('Info'),
+                                    onPressed: () => showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) => AlertDialog(
+
+                                        title: const Text('Magic Mirror Usage'),
+                                        content: Text(
+                                            "\n                   Face the Mirror\n\n                     Take a selfie\n\n                   Enjoy the story!"),
+                                        contentTextStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context, 'Got it!'),
+                                            child: const Text('Got it!'),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                ],
+                              ),
+                            ],
                           ),
-                          Padding(
-                            padding: EdgeInsets
-                                .fromLTRB(
-                                0, 8, 0, 0),
-                            child: Text(
-                              "let the MagicMirror choose a story for you! Tap here to try it.",
-                              overflow:
-                              TextOverflow
-                                  .fade,
-                              maxLines: 3,
-                              style:
-                              FlutterFlowTheme
-                                  .bodyText1
-                                  .override(
-                                fontFamily:
-                                'Poppins',
+
+                        ),
+
+                        /*
+                        InkWell(
+                          child: Container(
+                            height: 260,
+                            child: Card(
+                              margin: EdgeInsets.all(4.0),
+                              clipBehavior:
+                              Clip.antiAliasWithSaveLayer,
+                              color: Color(0xFFF5F5F5),
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(20),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+
+                                  Image.network(
+                                    'https://thumbs.dreamstime.com/b/pink-magic-mirror-cartoon-wonderful-64577704.jpg',
+                                    width: double.infinity,
+                                    height: 120,
+                                    fit: BoxFit.contain,
+                                  ),
+
+                                  Padding(
+                                    padding:
+                                    EdgeInsets.fromLTRB(
+                                        15, 15, 15, 25),
+                                    child: Column(
+                                      mainAxisSize:
+                                      MainAxisSize.min,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets
+                                              .fromLTRB(
+                                              0, 10, 0, 0),
+                                          child: Row(
+                                            mainAxisSize:
+                                            MainAxisSize
+                                                .max,
+                                            mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .spaceBetween,
+                                            children: [
+                                              Text("Let's try the Magic Mirror"
+                                              ),
+                                              Text(
+                                                "Face Emotion",
+                                                overflow:
+                                                TextOverflow
+                                                    .ellipsis,
+                                                style: FlutterFlowTheme
+                                                    .bodyText1
+                                                    .override(
+                                                  fontFamily:
+                                                  'Poppins',
+                                                  color: FlutterFlowTheme
+                                                      .secondaryColor,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets
+                                              .fromLTRB(
+                                              0, 8, 0, 0),
+                                          child: Text(
+                                            "let the MagicMirror choose a story for you! Tap here to try it.",
+                                            overflow:
+                                            TextOverflow
+                                                .fade,
+                                            maxLines: 3,
+                                            style:
+                                            FlutterFlowTheme
+                                                .bodyText1
+                                                .override(
+                                              fontFamily:
+                                              'Poppins',
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-          ),
-        onTap: () async {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
+                          ),
+                          onTap: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
 
-              builder: (context) =>
-                  MagicMirror2Widget(),
-            ),
-          );
-        },
-      ),
+                                builder: (context) =>
+                                    MagicMirror2Widget(),
+                              ),
+                            );
+                          },
+                        ),
+                        */
 
-                    /*
+
+
+
+                        /*
                     Card(
                           clipBehavior: Clip.antiAliasWithSaveLayer,
                           color: Color(0xFFF5F5F5),
@@ -479,7 +550,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     placeHolder(),
   ];
 
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -520,23 +590,24 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings), label: "Settings")
           ],
           currentIndex: _selectedIndex,
-
           selectedItemColor: Colors.amber[700],
-          onTap: (index ){
-            List lst = [SearchstoryWidget(),HomePageWidget(),AccountpageWidget()];
-
+          onTap: (index) {
+            List lst = [
+              SearchstoryWidget(),
+              HomePageWidget(),
+              AccountpageWidget()
+            ];
 
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    lst[index],
+                builder: (context) => lst[index],
               ),
             );
-
           },
         ),
         body: Center(

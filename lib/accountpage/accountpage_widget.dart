@@ -38,7 +38,7 @@ class _AccountpageWidgetState extends State<AccountpageWidget> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings")
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[700],

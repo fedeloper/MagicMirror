@@ -146,6 +146,7 @@ class _TellingV2State extends State<TellingV2> {
           _player.durationStream,
           (position, bufferedPosition, duration) => PositionData(
               position, bufferedPosition, duration ?? Duration.zero));
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
@@ -154,30 +155,6 @@ class _TellingV2State extends State<TellingV2> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          unselectedItemColor: Color(0xFF5A5555),
-          showUnselectedLabels: true,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.play_circle_fill), label: "Listen"),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.amber[700],
-          onTap: (index ){
-            List lst = [TellingV2(),SearchstoryWidget(),HomePageWidget(),AccountpageWidget()];
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                lst[index],
-              ),
-            );
-
-          },
-        ),
         appBar: AppBar(
           flexibleSpace: Image(
             image: AssetImage('assets/images/original.jpg'),
