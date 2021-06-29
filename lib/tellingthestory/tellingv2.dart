@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flash/flash.dart';
+import 'package:magic_mirror/home_page/home_page_widget.dart';
 import 'package:path/path.dart';
 import 'package:animate_icons/animate_icons.dart';
 import 'package:audio_session/audio_session.dart';
@@ -151,6 +152,24 @@ class _TellingV2State extends State<TellingV2> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        appBar: AppBar(
+          actions: <Widget>[
+            IconButton(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        controller.dispose();
+                        dispose();
+                        return HomePageWidget();
+                      }
+                    ),
+                  );
+                },
+                icon: Icon(Icons.home))
+          ],
+        ),
         body: SafeArea(
           child: !loaded_links
               ? Center(
@@ -159,6 +178,15 @@ class _TellingV2State extends State<TellingV2> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    /*
+                    Container(
+                      height: 50,
+                      color: Colors.white,
+                    ),
+
+                     */
+
+                    /*
                     Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 0.25,
@@ -167,6 +195,7 @@ class _TellingV2State extends State<TellingV2> {
                       ),
                       child: MadoWidget(),
                     ),
+                    */
                     Expanded(
                       child: StreamBuilder<SequenceState>(
                         stream: _player.sequenceStateStream,
@@ -312,17 +341,19 @@ class _TellingV2State extends State<TellingV2> {
                         },
                       ),
                     ),
+                    Divider(),
                     Container(
+                      height: 60,
                         child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Spacer(),
                         Container(
-                            padding: EdgeInsets.fromLTRB(75, 0, 0, 0),
+                            padding: EdgeInsets.fromLTRB(20, 0, 35, 0),
                             child: AnimateIcons(
                               startIcon: Icons.visibility,
-                              endIcon: Icons.hearing,//visibility_off,
+                              endIcon: Icons.hearing, //visibility_off,
                               size: 50.0,
                               controller: controller_icon,
                               // add this tooltip for the start icon
@@ -332,50 +363,56 @@ class _TellingV2State extends State<TellingV2> {
 
                               onStartIconPress: () {
                                 attention_ai = false;
-                                _showBasicsFlash(Duration(milliseconds: 500),
-                                    "Attention-AI: deactivated");
+                                controller.dispose();
+                                _showBasicsFlash(Duration(milliseconds: 1300),
+                                    "Relax Mode: activated");
 
                                 return true;
                               },
                               onEndIconPress: () {
                                 attention_ai = true;
-                                _showBasicsFlash(Duration(milliseconds: 500),
-                                    "Attention-AI: activated");
+                                //controller.initialize();
+                                _showBasicsFlash(Duration(milliseconds: 1300),
+                                    "Attention Mode : activated");
                                 return true;
                               },
+
                               duration: Duration(milliseconds: 500),
                               startIconColor: Colors.blueAccent,
                               endIconColor: Colors.blueAccent,
-                              clockwise: false,
+                              clockwise: true,
                             )),
                         Spacer(),
-                        AnimateIcons(
-                          startIcon: Icons.person,
-                          endIcon: Icons.groups,
-                          size: 50.0,
-                          controller: controller_icon,
-                          // add this tooltip for the start icon
-                          startTooltip: 'Single Mode',
-                          // add this tooltip for the end icon
-                          endTooltip: 'Group Mode',
+                        Container(
+                          padding: EdgeInsets.fromLTRB(35, 0, 75, 0),
+                          child: AnimateIcons(
+                            startIcon: Icons.person,
+                            endIcon: Icons.groups,
+                            size: 50.0,
+                            controller: controller_icon,
+                            // add this tooltip for the start icon
+                            startTooltip: 'Single Mode',
+                            // add this tooltip for the end icon
+                            endTooltip: 'Group Mode',
 
-                          onStartIconPress: () {
-                            secure_ai = false;
-                            _showBasicsFlash(Duration(milliseconds: 500),
-                                "Privacy-AI: deactivated");
+                            onStartIconPress: () {
+                              secure_ai = false;
+                              _showBasicsFlash(Duration(milliseconds: 1300),
+                                  "Group Mode: activated");
 
-                            return true;
-                          },
-                          onEndIconPress: () {
-                            secure_ai = true;
-                            _showBasicsFlash(Duration(milliseconds: 500),
-                                "Privacy-AI: activated");
-                            return true;
-                          },
-                          duration: Duration(milliseconds: 500),
-                          startIconColor: Colors.blueAccent,
-                          endIconColor: Colors.blueAccent,
-                          clockwise: false,
+                              return true;
+                            },
+                            onEndIconPress: () {
+                              secure_ai = true;
+                              _showBasicsFlash(Duration(milliseconds: 1300),
+                                  "Single Mode: activated");
+                              return true;
+                            },
+                            duration: Duration(milliseconds: 500),
+                            startIconColor: Colors.blueAccent,
+                            endIconColor: Colors.blueAccent,
+                            clockwise: true,
+                          ),
                         )
                       ],
                     )),

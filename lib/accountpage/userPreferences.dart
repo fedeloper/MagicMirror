@@ -2,6 +2,7 @@ import 'package:magic_mirror/accountpage/picProfileWIdget.dart';
 import 'package:magic_mirror/accountpage/user_preference.dart';
 import 'package:magic_mirror/backend/schema/users_record.dart';
 import 'package:flutter_tags/flutter_tags.dart';
+import 'package:magic_mirror/home_page/home_page_widget.dart';
 import '../auth/auth_util.dart';
 import '../components/mado_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -12,8 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-
 
 class userPreferencesWidget extends StatefulWidget {
   final UsersRecord record;
@@ -74,6 +73,33 @@ class _userPreferencesWidgetState extends State<userPreferencesWidget> {
               body: ListView(
                 physics: BouncingScrollPhysics(),
                 children: [
+                  Container(
+                    padding: EdgeInsets.fromLTRB(0, 15, 15, 0),
+                  height: 50,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomePageWidget(),
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 14.0,
+                              backgroundColor: Colors.white,
+                              //foregroundColor: Colors.blue,
+                              child: Icon(Icons.close, color: Colors.black),
+                            ),
+                          ), //Icon(Icons.close),
+                      ],
+                    ),
+                  ),
                   ProfileWidget(
                     imagePath: user.imagePath,
                     onClicked: () async {},

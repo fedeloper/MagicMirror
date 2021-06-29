@@ -193,6 +193,7 @@ class _MadoWidgetState extends State<MadoWidget> {
                                                 ),
                                               ),
                                             ),
+                                            /*
                                             Expanded(
                                               child: Align(
                                                 alignment: Alignment(0.95, 0),
@@ -203,6 +204,7 @@ class _MadoWidgetState extends State<MadoWidget> {
                                                 ),
                                               ),
                                             )
+                                            */
                                           ],
                                         ),
                                       ),

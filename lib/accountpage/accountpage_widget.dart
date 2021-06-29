@@ -1,3 +1,5 @@
+import 'package:magic_mirror/home_page/home_page_widget.dart';
+
 import '../auth/auth_util.dart';
 import '../components/mado_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -31,7 +33,36 @@ class _AccountpageWidgetState extends State<AccountpageWidget> {
       body: SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Container(
+              padding: EdgeInsets.fromLTRB(0, 15, 15, 0),
+              height: 80,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePageWidget(),
+                        ),
+                      );
+                    },
+                    child: CircleAvatar(
+                      radius: 14.0,
+                      backgroundColor: Colors.white,
+                      //foregroundColor: Colors.blue,
+                      child: Icon(Icons.close, color: Colors.black),
+                    ),
+                  ), //Icon(Icons.close),
+                ],
+              ),
+            ),
+            /*
             Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.25,
@@ -40,6 +71,7 @@ class _AccountpageWidgetState extends State<AccountpageWidget> {
               ),
               child: MadoWidget(),
             ),
+            */
             Column(
               mainAxisSize: MainAxisSize.max,
               children: [
