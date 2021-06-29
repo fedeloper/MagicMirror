@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:magic_mirror/accountpage/accountpage_widget.dart';
 import 'package:magic_mirror/searchstory/book.dart';
 import 'package:magic_mirror/searchstory/repository.dart';
+import 'package:magic_mirror/searchstory/searchstory_widget.dart';
 import 'package:magic_mirror/tellingthestory/tellingv2.dart';
 import 'dart:developer' as developer;
 import '../components/mado_widget.dart';
@@ -147,12 +149,7 @@ class HomeState extends State<Home> {
                             ),
                             child: MadoWidget(),
                           ),
-                          Container(
-                            child: Text(
-                              "Suggested Stories",
-                              style: GoogleFonts.cutiveMono(fontSize: 25, fontWeight: FontWeight.bold),
-                            ) ,
-                          ),
+
                           Container(
                             height: 300,
                             width: double.infinity,
@@ -192,6 +189,7 @@ class HomeState extends State<Home> {
                                                       height: 120,
                                                       fit: BoxFit.cover,
                                                     ),
+
                                                     Padding(
                                                       padding:
                                                           EdgeInsets.fromLTRB(
@@ -200,6 +198,12 @@ class HomeState extends State<Home> {
                                                         mainAxisSize:
                                                             MainAxisSize.min,
                                                         children: [
+                                                          Container(
+                                                            child: Text(
+                                                              "Suggested Story #"+ (index+1).toString(),
+                                                              //style: GoogleFonts.cutiveMono(fontSize: 25, fontWeight: FontWeight.bold),
+                                                            ) ,
+                                                          ),
                                                           Padding(
                                                             padding: EdgeInsets
                                                                 .fromLTRB(
@@ -270,7 +274,7 @@ class HomeState extends State<Home> {
                                                               overflow:
                                                                   TextOverflow
                                                                       .fade,
-                                                              maxLines: 4,
+                                                              maxLines: 3,
                                                               style:
                                                                   FlutterFlowTheme
                                                                       .bodyText1
@@ -331,23 +335,107 @@ class HomeState extends State<Home> {
                             ),
                           ),
                         //Divider(),
-                          ImageTextButton(
-                            imageHeight: 170,
-                              onPressed: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MagicMirror2Widget(),
+                InkWell(
+                child: Container(
+                height: 260,
+                    child: Card(
+                    margin: EdgeInsets.all(4.0),
+                clipBehavior:
+                Clip.antiAliasWithSaveLayer,
+                color: Color(0xFFF5F5F5),
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                  BorderRadius.circular(20),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+
+                    Image.network(
+                      'https://thumbs.dreamstime.com/b/pink-magic-mirror-cartoon-wonderful-64577704.jpg',
+                      width: double.infinity,
+                      height: 120,
+                      fit: BoxFit.cover,
+                    ),
+
+                    Padding(
+                      padding:
+                      EdgeInsets.fromLTRB(
+                          15, 15, 15, 25),
+                      child: Column(
+                        mainAxisSize:
+                        MainAxisSize.min,
+                        children: [
+                           Padding(
+                            padding: EdgeInsets
+                                .fromLTRB(
+                                0, 10, 0, 0),
+                            child: Row(
+                              mainAxisSize:
+                              MainAxisSize
+                                  .max,
+                              mainAxisAlignment:
+                              MainAxisAlignment
+                                  .spaceBetween,
+                              children: [
+                                Text("Let's try the Magic Mirror"
+                                ),
+                                Text(
+                                  "Face Emotion",
+                                  overflow:
+                                  TextOverflow
+                                      .ellipsis,
+                                  style: FlutterFlowTheme
+                                      .bodyText1
+                                      .override(
+                                    fontFamily:
+                                    'Poppins',
+                                    color: FlutterFlowTheme
+                                        .secondaryColor,
                                   ),
-                                );
-                              },
-                              image: Image.network(
-                                  'https://thumbs.dreamstime.com/b/pink-magic-mirror-cartoon-wonderful-64577704.jpg',
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.height * 0.2,
-                              ).image,
-                              text: Text("")
+                                )
+                              ],
+                            ),
                           ),
+                          Padding(
+                            padding: EdgeInsets
+                                .fromLTRB(
+                                0, 8, 0, 0),
+                            child: Text(
+                              "let the MagicMirror choose a story for you! Tap here to try it.",
+                              overflow:
+                              TextOverflow
+                                  .fade,
+                              maxLines: 3,
+                              style:
+                              FlutterFlowTheme
+                                  .bodyText1
+                                  .override(
+                                fontFamily:
+                                'Poppins',
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+          ),
+        onTap: () async {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+
+              builder: (context) =>
+                  MagicMirror2Widget(),
+            ),
+          );
+        },
+      ),
+
                     /*
                     Card(
                           clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -391,6 +479,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     placeHolder(),
   ];
 
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -429,13 +518,26 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         key: scaffoldKey,
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.construction), label: "?"),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
           ],
           currentIndex: _selectedIndex,
+
           selectedItemColor: Colors.amber[700],
-          onTap: _onItemTapped,
+          onTap: (index ){
+            List lst = [SearchstoryWidget(),HomePageWidget(),AccountpageWidget()];
+
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    lst[index],
+              ),
+            );
+
+          },
         ),
         body: Center(
           child: _widgetOptions.elementAt(_selectedIndex),

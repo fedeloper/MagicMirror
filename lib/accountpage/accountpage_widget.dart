@@ -1,4 +1,8 @@
+import 'package:magic_mirror/accountpage/userPreferences.dart';
+import 'package:magic_mirror/backend/backend.dart';
+import 'package:magic_mirror/backend/schema/users_record.dart';
 import 'package:magic_mirror/home_page/home_page_widget.dart';
+import 'package:magic_mirror/searchstory/searchstory_widget.dart';
 
 import '../auth/auth_util.dart';
 import '../components/mado_widget.dart';
@@ -25,11 +29,33 @@ class _AccountpageWidgetState extends State<AccountpageWidget> {
     super.initState();
     emailTextController = TextEditingController(text: currentUserEmail);
   }
-
+  int _selectedIndex = 2;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[700],
+        onTap: (index ){
+          List lst = [SearchstoryWidget(),HomePageWidget(),AccountpageWidget()];
+
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+              lst[index],
+            ),
+          );
+
+        },
+      ),
       body: SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -110,15 +136,44 @@ class _AccountpageWidgetState extends State<AccountpageWidget> {
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Padding(
+                            InkWell(child:Padding(
                               padding: EdgeInsets.fromLTRB(24, 0, 0, 0),
                               child: Text(
-                                'Order History',
+                                'Preferences',
                                 style: FlutterFlowTheme.bodyText1.override(
                                   fontFamily: 'Poppins',
                                 ),
                               ),
+
                             ),
+                            onTap: () {
+    StreamBuilder<List<UsersRecord>>(
+    stream: queryUsersRecord(
+    queryBuilder: (usersRecord) =>
+    usersRecord.where('email', isEqualTo: currentUserEmail),
+    singleRecord: true,
+    ),
+    builder: (context, snapshot) {
+    // Customize what your widget looks like when it's loading.
+    if (!snapshot.hasData) {
+    return Center(child: CircularProgressIndicator());
+    }
+    List<UsersRecord> madoUsersRecordList = snapshot.data;
+    // Customize what your widget looks like with no query results.
+    if (snapshot.data.isEmpty) {
+    // return Container();
+    // For now, we'll just include some dummy data.
+    madoUsersRecordList = createDummyUsersRecord(count: 1);
+    }
+    final madoUsersRecord = madoUsersRecordList.first;
+
+                                Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                builder: (context) =>   userPreferencesWidget(madoUsersRecord)));
+
+                                });})
+                            ,
                             Expanded(
                               child: Align(
                                 alignment: Alignment(0.9, 0),

@@ -112,6 +112,7 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
       key: scaffoldKey,
       body: SafeArea(
         child: Container(
+
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 1,
           child: Column(
@@ -119,22 +120,28 @@ class _MagicMirror2Widget extends State<MagicMirror2Widget> {
             children: [
 
               Container(
+
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.20,
-                decoration: BoxDecoration(
-                  color: Color(0x52EEEEEE),
-                ),
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: DefaultTextStyle.of(context).style,
-                    children: <TextSpan> [
-                      TextSpan(text: "\nTry out the \n" , style: TextStyle(fontWeight: FontWeight.normal, fontSize: 20, fontStyle: FontStyle.normal, color: Colors.black, decoration: TextDecoration.none)),
-                      TextSpan(text: "Magic Mirror", style: GoogleFonts.marckScript(fontStyle: FontStyle.italic, color: Colors.black, decoration: TextDecoration.none))
-                    ]
+                  decoration: BoxDecoration(
+                    color: Color(0x70EEEEEE),
+                    image: DecorationImage(
+                      fit: BoxFit.fitWidth,
+                      image: Image.asset(
+                        'assets/images/original.jpg',
+                      ).image,
+                    ),
+                    shape: BoxShape.rectangle,
                   ),
-                ) //MadoWidget(),
-              ),
+                child: Column(
+
+                    children:  [
+                      Text("\nTry out the \n",style: TextStyle(fontSize: 15),),
+                      Image.asset('assets/images/c874bc5649ca63dd5a11ae9ececfad05.png', fit: BoxFit.cover,height:50),
+                      Text("Take a photo of your face and \nwe will choose a story for you! ",style: TextStyle(fontSize: 15),maxLines: 2,overflow: TextOverflow
+                          .ellipsis,),
+  ]
+              )),
 
               //Divider(),
               Expanded(

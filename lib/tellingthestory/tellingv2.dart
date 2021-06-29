@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flash/flash.dart';
+import 'package:magic_mirror/accountpage/accountpage_widget.dart';
 import 'package:magic_mirror/home_page/home_page_widget.dart';
+import 'package:magic_mirror/searchstory/searchstory_widget.dart';
 import 'package:path/path.dart';
 import 'package:animate_icons/animate_icons.dart';
 import 'package:audio_session/audio_session.dart';
@@ -129,7 +131,7 @@ class _TellingV2State extends State<TellingV2> {
       loaded_links = true;
     });
   }
-
+  int _selectedIndex = 0;
   @override
   void dispose() {
     faceDetector.close();
@@ -152,7 +154,38 @@ class _TellingV2State extends State<TellingV2> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        bottomNavigationBar: BottomNavigationBar(
+          unselectedItemColor: Color(0xFF5A5555),
+          showUnselectedLabels: true,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.play_circle_fill), label: "Listen"),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.amber[700],
+          onTap: (index ){
+            List lst = [TellingV2(),SearchstoryWidget(),HomePageWidget(),AccountpageWidget()];
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                lst[index],
+              ),
+            );
+
+          },
+        ),
         appBar: AppBar(
+          flexibleSpace: Image(
+            image: AssetImage('assets/images/original.jpg'),
+            fit: BoxFit.cover,
+          ),
+          backgroundColor: Colors.transparent,
+          title:Image.asset('assets/images/c874bc5649ca63dd5a11ae9ececfad05.png', fit: BoxFit.cover,height:30),
+
           actions: <Widget>[
             IconButton(
                 onPressed: () async {

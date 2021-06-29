@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:magic_mirror/components/mado_widget.dart';
+import 'package:magic_mirror/home_page/home_page_widget.dart';
 import 'package:magic_mirror/searchstory/repository.dart';
 import 'package:magic_mirror/tellingthestory/tellingv2.dart';
 import 'dart:developer' as developer;
@@ -34,6 +35,7 @@ class _SearchstoryWidgetState extends State<SearchstoryWidget> {
   TextEditingController textController;
   List<Book> books=[];
   List<Book> books_full=[];
+  int _selectedIndex = 0;
   void tt() async {
     Repository rep = new Repository();
 
@@ -84,10 +86,34 @@ class _SearchstoryWidgetState extends State<SearchstoryWidget> {
       return Scaffold(
         key: scaffoldKey,
         backgroundColor: Colors.white,
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.amber[700],
+          onTap: (index ){
+            List lst = [SearchstoryWidget(),HomePageWidget(),AccountpageWidget()];
+
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                lst[index],
+              ),
+            );
+
+          },
+        ),
         body: Column(
+
           mainAxisSize: MainAxisSize.max,
           children: [
             Container(
+              padding: EdgeInsets.fromLTRB(0, 24, 0, 0),
               width: MediaQuery
                   .of(context)
                   .size
